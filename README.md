@@ -1,2 +1,9 @@
 # Exercicios de Algoritmos
- Uma coleção de exercicios proposto no curso de Bacharelado em Ciancia da computação pelo Instuto Federal do Sul de Minas 
+ Uma coleção de exercícios propostos no curso de Bacharelado em Ciência da Computação pelo Instituto Federal do Sul de Minas.
+
+
+## Linguagens propostas
+- C 
+- Python
+- Javascript
+- C++
