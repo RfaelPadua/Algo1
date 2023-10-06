@@ -7,6 +7,7 @@ int main(){
 	int i;
 	
 	for(i = 0; i < 10; i++){
+		printf("Informe o %do numero: ", i+1);
 		scanf("%d", &vetor[i]);	
 	}
 	

@@ -6,11 +6,13 @@ int eh_primo(int n);
 int main(){
 	int vetor[10], i;
 	
+	printf("Digite 10 numeros inteiros:\n");
+	
 	for(i = 0; i < 10; i++){
 		scanf("%d", &vetor[i]);
 	}
 	
-	printf("%d", qnt_primos(vetor));
+	printf("Quantidade de números primos: %d\n", qnt_primos(vetor));
 }
 
 int eh_primo(int n){
@@ -18,7 +20,7 @@ int eh_primo(int n){
 	if(n <= 1){
 		return 0;
 	}
-	for(i = 2; i <= n/2;i++){
+	for(i = 2; i * i <= n;i++){
 		if(n % i == 0){
 			return 0;
 		}
