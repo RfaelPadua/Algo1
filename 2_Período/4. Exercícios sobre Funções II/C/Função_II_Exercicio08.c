@@ -25,6 +25,9 @@ int main(){
 void coordenadaMaiorElemento(int m, int a[][m], int *linha, int *coluna){
     int i, j;
     int maiorElemento = a[0][0];
+    *linha = 1;
+    *coluna = 1;
+
     for(i = 0; i < m; i++){
         for(j = 0; j < m ; j++){
             if(maiorElemento < a[i][j]){
