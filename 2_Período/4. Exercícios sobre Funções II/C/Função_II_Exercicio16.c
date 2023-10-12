@@ -1,5 +1,7 @@
 #include<stdio.h>
+
 int elementosRepetidos(int m, int a[][m]);
+
 int main(){
     int m, i, j;
     printf("Informe m de Amxm: ");
