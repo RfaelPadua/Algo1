@@ -17,7 +17,6 @@ int main(){
     }else{
         printf("Nao ha elementos repetidos");
     }
-
 }
 
 
