@@ -13,7 +13,7 @@ struct Produto {
 int main(){
 
     int menu = 666;
-    int cadastroID = 0;
+    int cadastroID = 10;
     int i;
 
     while(menu != 0){
@@ -25,7 +25,19 @@ int main(){
         
         printf("0. Sair.\n");
         scanf("%d", &menu);fflush(stdin);
-        struct Produto produto[MAX_PESSOAS];
+        // struct Produto produto[MAX_PESSOAS];
+        struct Produto produto[10] = {
+        {"Marca 1", "Descrição 1", 5, 10.5},
+        {"Marca 2", "Descrição 2", 7, 15.2},
+        {"Marca 3", "Descrição 3", 3, 8.9},
+        {"Marca 4", "Descrição 4", 2, 12.6},
+        {"Marca 5", "Descrição 5", 9, 11.0},
+        {"Marca 6", "Descrição 6", 4, 9.8},
+        {"Marca 7", "Descrição 7", 6, 14.5},
+        {"Marca 8", "Descrição 8", 1, 7.2},
+        {"Marca 9", "Descrição 9", 8, 13.3},
+        {"Marca 10", "Descrição 10", 10, 16.7}
+    };
 
         switch(menu){
             case 1:
