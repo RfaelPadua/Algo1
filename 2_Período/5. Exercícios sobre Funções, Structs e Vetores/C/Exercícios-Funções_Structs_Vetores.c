@@ -2,13 +2,18 @@
 #include<stdlib.h>
 #include<string.h>
 
+#define MAX_PESSOAS 100
+
 struct Produto {
     char marca[100];
     char descricao[50];
     int quantidade;
     float valor;
 };
-#define MAX_PESSOAS 100
+
+void somaTotal(struct Produto produto[], int n);
+void somaPorDescricao(struct Produto produto[], int n, char *descricao);
+
 
 int main(){
 
@@ -34,10 +39,10 @@ int main(){
         {"Marca 2", "Descricao 2", 7, 15.2},
         {"Marca 3", "Descricao 3", 3, 8.9},
         {"Marca 4", "Descricao 4", 2, 12.6},
-        {"Marca 5", "Descricao 5", 9, 11.0},
+        {"Marca 5", "Descricao 10", 9, 11.0},
         {"Marca 6", "Descricao 6", 4, 9.8},
         {"Marca 7", "Descricao 7", 6, 14.5},
-        {"Marca 8", "Descricao 8", 1, 7.2},
+        {"Marca 8", "Descricao 10", 1, 7.2},
         {"Marca 9", "Descricao 9", 8, 13.3},
         {"Marca 10", "Descricao 10", 10, 16.7}
     };
@@ -84,42 +89,47 @@ int main(){
                 break;
             case 3:
                 system("cls");
-                soma = 0;
-                for(i = 0; i < cadastroID; i++){
-                    soma += produto[i].valor;
-                }
-                printf("A soma dos valores dos produtos eh %.2f.\n", soma);
+                somaTotal(produto, cadastroID);
                 system("pause");
                 break;
             case 4:
                 system("cls");
-                soma = 0;
                 char consultaDescricao[50];
-
                 printf("Informe a descricao a ser consultada: ");
                 fgets(consultaDescricao, 50, stdin);
                 consultaDescricao[strlen(consultaDescricao) - 1] = '\0';
 
-                for(i = 0; i < cadastroID; i++){
-                    if(strlen(consultaDescricao) != strlen(produto[i].descricao)){
-                        continue;
-                    }
-                    for(j = 0; j < strlen(consultaDescricao); j++){
-                        if(consultaDescricao[j] != produto[i].descricao[j]){
-                            break;
-                        }
-                        if(j == strlen(consultaDescricao)){
-                            soma+=produto[i].valor;
-                        }
-                    }
-                }
-                printf("%d", soma);
+                somaPorDescricao(produto, cadastroID, consultaDescricao);
+
                 system("pause");
                 break;
+            case 5:
+                
+            break;
             default:
                 menu = 0;
                 break;
         }
 
     }
+}
+
+void somaTotal(struct Produto produto[], int n){
+    float soma = 0;
+    int i;
+    for(i = 0; i < n; i++){
+        soma += produto[i].valor * produto[i].quantidade;
+    }
+    printf("A soma dos valores dos produtos eh %.2f.\n", soma);
+}
+
+void somaPorDescricao(struct Produto produto[], int n, char *descricao){
+    int i;
+    float soma = 0;
+    for(i = 0; i < n; i++){
+        if (strcmp(produto[i].descricao, descricao) == 0) {
+            soma += produto[i].valor * produto[i].quantidade;
+        }
+    }
+    printf("ss %.2f\n", soma);
 }
