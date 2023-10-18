@@ -17,23 +17,24 @@ void menorValor(struct Produto produto[], int n);
 void alterar(struct Produto produto[], struct Produto novoProduto, int n, int cadastroID);
 void excluir(struct Produto produto[], int n, int *cadastroID);
 
-struct Produto produto[MAX_PESSOAS] = {
-        {"Marca 1", "Descricao 1", 5, 10.5},
-        {"Marca 2", "Descricao 2", 7, 15.2},
-        {"Marca 3", "Descricao 3", 3, 8.9},
-        {"Marca 4", "Descricao 4", 2, 12.6},
-        {"Marca 5", "Descricao 10", 9, 11.0},
-        {"Marca 6", "Descricao 6", 4, 9.8},
-        {"Marca 7", "Descricao 7", 6, 14.5},
-        {"Marca 8", "Descricao 10", 1, 7.2},
-        {"Marca 9", "Descricao 9", 8, 13.3},
-        {"Marca 10", "Descricao 10", 10, 16.7}
-    };
+// teste
+// struct Produto produto[MAX_PESSOAS] = {
+//         {"Marca 1", "Descricao 1", 5, 10.5},
+//         {"Marca 2", "Descricao 2", 7, 15.2},
+//         {"Marca 3", "Descricao 3", 3, 8.9},
+//         {"Marca 4", "Descricao 4", 2, 12.6},
+//         {"Marca 5", "Descricao 10", 9, 11.0},
+//         {"Marca 6", "Descricao 6", 4, 9.8},
+//         {"Marca 7", "Descricao 7", 6, 14.5},
+//         {"Marca 8", "Descricao 10", 1, 7.2},
+//         {"Marca 9", "Descricao 9", 8, 13.3},
+//         {"Marca 10", "Descricao 10", 10, 16.7}
+//     };
 
 int main(){
 
     int menu = 666;
-    int cadastroID = 9;
+    int cadastroID = -1;
     int i, j;
     float soma;
 
@@ -51,7 +52,7 @@ int main(){
         
         printf("0. Sair.\n");
         scanf("%d", &menu);fflush(stdin);
-        // struct Produto produto[MAX_PESSOAS];
+        struct Produto produto[MAX_PESSOAS];
         
 
         switch(menu){
@@ -86,6 +87,7 @@ int main(){
                 break;
             case 2:
                 for(i = 0; i <= cadastroID; i++){
+                    printf("\nID: %d", i);
                     printf("\nMarca: %s", produto[i].marca);
                     printf("\nDescricao: %s", produto[i].descricao);
                     printf("\nQuantidade: %d", produto[i].quantidade);
