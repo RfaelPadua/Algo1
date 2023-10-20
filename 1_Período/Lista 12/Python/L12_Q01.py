@@ -1,6 +1,8 @@
 import os
+import random
 
 while(True):
+    os.system('cls')
     menu = 0
     print("1. Gerar dígitos verificadores.")
     print("2. Validar CPF.")
@@ -26,7 +28,10 @@ while(True):
                 soma += CPF[j] * (i - j)
             
             soma %= 11
-            CPF.append(11 - soma)
+            if soma > 9:
+                CPF.append(0)
+            else:
+                CPF.append(11 - soma)
             soma = 0
 
         for numero in CPF:
@@ -62,6 +67,50 @@ while(True):
         print("CPF Valido.")
 
         print("\nPrecione enter para continuar. ")
+        input()
+        
+    elif menu == 3:
+        CPF = [random.randint(0,9) for i in range(9)]
+
+        soma = 0
+        for i in range(10, 12):
+            for j in range(len(CPF)):
+                soma += CPF[j] * (i - j)
+            
+            soma %= 11
+            if soma > 9:
+                CPF.append(0)
+            else:
+                CPF.append(11 - soma)
+            soma = 0
+
+        for numero in CPF:
+            print(numero, end = '')
+
+        print('\n')
+        print("\nPrecione enter para continuar. ")
+        input()
+    elif menu == 4:
+        n = int(input("Informe N: "))
+        for i in range(n):
+            CPF = [random.randint(0,9) for i in range(9)]
+
+            soma = 0
+            for i in range(10, 12):
+                for j in range(len(CPF)):
+                    soma += CPF[j] * (i - j)
+                
+                soma %= 11
+                if 11 - soma > 9:
+                    CPF.append(0)
+                else:
+                    CPF.append(11 - soma)
+                soma = 0
+
+            for numero in CPF:
+                print(numero, end = '')
+            print()
+        print("Precione enter para continuar. ")
         input()
     else:
         break
