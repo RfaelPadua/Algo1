@@ -67,6 +67,7 @@ void Le_Dados()
             printf("Valor: %.2f\n", Carro.Valor);
         }
     }
+    fclose(Id_Arquivo);
 }
 
 /* fun��o para alterar os dados de um registro com a placa passada por par�metro */
@@ -207,6 +208,14 @@ void maisBarato_Caro(float valor){
     {
         printf("Problemas na abertura do arquivo de carros para gravar!\n");
     } 
+    if((Id_Arquivo2 = fopen("carroscaros.dat","a+b")) == NULL)
+    {
+        printf("Problemas na abertura do arquivo de carros para gravar!\n");
+    }
+    if((Id_Arquivo3 = fopen("carrosbaratos.dat","a+b")) == NULL)
+    {
+        printf("Problemas na abertura do arquivo de carros para gravar!\n");
+    }
      
     struct Registro_Carro Carro;
 
@@ -225,22 +234,24 @@ void maisBarato_Caro(float valor){
         {
             if(Carro.Valor < valor){
                 if((Id_Arquivo2 = fopen("carroscaros.dat","a+b")) == NULL)
-            {
-                printf("Problemas na abertura do arquivo de carros para gravar!\n");
-            } 
+                {
+                    printf("Problemas na abertura do arquivo de carros para gravar!\n");
+                } 
             
-            /* fwrite grava o registro no arquivo. � necess�rio indicar o tamanho 
-            do registro via "sizeof" */
-            fwrite(&Carro, sizeof(struct Registro_Carro),1, Id_Arquivo);
+                /* fwrite grava o registro no arquivo. � necess�rio indicar o tamanho 
+                do registro via "sizeof" */
+                fwrite(&Carro, sizeof(struct Registro_Carro),1, Id_Arquivo2);
+                fclose(Id_Arquivo2);
 
             }else{
                 if((Id_Arquivo3 = fopen("carrosbaratos.dat","a+b")) == NULL)
-            {
-                printf("Problemas na abertura do arquivo de carros para gravar!\n");
-            }
-            /* fwrite grava o registro no arquivo. � necess�rio indicar o tamanho
-            do registro via "sizeof" */
-            fwrite(&Carro, sizeof(struct Registro_Carro),1, Id_Arquivo);      
+                {
+                    printf("Problemas na abertura do arquivo de carros para gravar!\n");
+                }
+                /* fwrite grava o registro no arquivo. � necess�rio indicar o tamanho
+                do registro via "sizeof" */
+                fwrite(&Carro, sizeof(struct Registro_Carro),1, Id_Arquivo3);      
+                fclose(Id_Arquivo3);
             }
         }
     }
@@ -248,6 +259,7 @@ void maisBarato_Caro(float valor){
     // Grava dados que est�o no buffer
     fclose(Id_Arquivo);
 }
+
 void Antigo(){
     if((Id_Arquivo = fopen("carros1.dat","r")) == NULL)
     {
@@ -288,6 +300,53 @@ void Antigo(){
 
 }
 
+void substitui(struct Registro_Carro CarroAlterado){
+    if((Id_Arquivo = fopen("carros1.dat","r+b")) == NULL)
+    {
+        printf("Problemas na abertura do arquivo de carros para gravar!\n");
+    }  
+    
+    // comando para voltar ao in�cio do arquivo
+    rewind(Id_Arquivo);
+    
+    /* Registro para receber os valores do arquivo */
+    struct Registro_Carro Carro;
+
+    printf("*** Alteracao ***\n\n");
+    // Contador utilizado para acessar o registro que ser� alterado
+    int cont=-1, aux = 0;
+    do{
+        aux = 0;
+        rewind(Id_Arquivo);
+    /* Percorre arquivo at� encontrar o fim */
+        while (!feof(Id_Arquivo))
+        {
+            /* fread faz a leitura de um registro e armazena o conte�do do registro lido do arquivo
+            no Registro Carro. � necess�rio indicar o tamanho do registro via "sizeof" */
+            fread(&Carro, sizeof(struct Registro_Carro), 1, Id_Arquivo);
+            
+            // Contador utilizado para acessar o registro que ser� alterado
+            cont++;
+            if(ferror(Id_Arquivo))
+            {
+                printf("Problemas na leitura do arquivo de carros!\n");
+            }
+            else if(!feof(Id_Arquivo) && (strcmp(Carro.Placa,"0")==0) && Carro.Flag==1)
+            {
+                // Posiciona-se no registro a ser alterado
+                fseek(Id_Arquivo, sizeof(struct Registro_Carro)*cont, SEEK_SET);     
+                // Grava o novo registro "CarroAlterado"
+                CarroAlterado.Flag=1;
+                fwrite(&CarroAlterado, sizeof(struct Registro_Carro),1, Id_Arquivo);
+                // Posiciona-se no final do arquivo
+                fseek(Id_Arquivo, 0, SEEK_END); 
+                aux = 1;
+            }
+        }
+    }while(aux == 1);
+    fclose(Id_Arquivo);
+}
+
 int main()
 {
   
@@ -305,6 +364,7 @@ int main()
         printf("5- Pesquisar Carro por modelo:\n");
         printf("6- Exibir Carro mais antigo:\n");
         printf("7- Gerar arquivos de carros mais baratos e mais caros:\n");
+        printf("8- Substituir todos os carros com a placa '0':\n");
         printf("0- Sair:\n");
         scanf("%d",&op);
         switch (op){         
@@ -379,6 +439,17 @@ int main()
                 printf("\nDigite o valor:");
                 scanf("%f", &valor);
                 maisBarato_Caro(valor);
+                system("pause");
+                break;
+            }case 8:
+            {
+                printf("*** Substituir todos os carros com a placa '0' ***\n");
+                printf("\nPlaca: "); scanf("%s",&Carro.Placa);
+                printf("\nModelo: "); scanf("%s",&Carro.Modelo);  
+                printf("\nCor: "); scanf("%s",&Carro.Cor);        
+                printf("\nAno: "); scanf("%d",&Carro.Ano);
+                printf("\nValor: "); scanf("%f",&Carro.Valor);
+                substitui(Carro);
                 system("pause");
                 break;
             }default: 
