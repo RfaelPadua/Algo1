@@ -37,7 +37,7 @@ void Le_Dados()
 {
     if((Id_Arquivo = fopen("carros1.dat","r")) == NULL)
     {
-        printf("Problemas na abertura do arquivo de carros para gravar!\n");
+        printf("Problemas na abertura do arquivo de carros para leitura!\n");
         return 0;
     }  
     
