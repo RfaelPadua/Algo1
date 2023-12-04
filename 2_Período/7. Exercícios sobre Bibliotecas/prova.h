@@ -51,7 +51,7 @@ int temNperfeito(int m, int n, int matriz[m][n]){ //Questão 3
                 }
             }
             if(soma == matriz[i][j]){
-                return 1
+                return 1;
             }
             soma = 0;
         }
@@ -62,15 +62,15 @@ int temNperfeito(int m, int n, int matriz[m][n]){ //Questão 3
 int soma_linha(int m, int n, int matriz[m][n]){
     int i, j, somas[m];
 
-    for(i = 0; i < m; i==){
-        soma[i] = 0;
+    for(i = 0; i < m; i++){
+        somas[i] = 0;
         for(j = 0; j < n; j++){
-            soma[i] += matriz[i][j];
+            somas[i] += matriz[i][j];
         }
         if(i == 0){
             continue;
         }else{
-            if(soma[i]!= soma [i - 1]){
+            if(somas[i]!= somas[i - 1]){
                 return 0;
             }
         }

@@ -16,10 +16,8 @@ int main(void){
         printf("0 - Sair\n");
 
         scanf("%d", &op);
-        switch (op)
-        {case 1:
-            
 
+        if(op == 1){
             printf("Informe uma string:\n"); fflush(stdin);
             fgets(str, 10, stdin);
 
@@ -30,22 +28,71 @@ int main(void){
 
 
             printf("\n%d\n", vogais_seguidas(str));
-            break;
-        case 2:
-            
+
+
+        }else if(op == 2){
+            int maior, menor;
+
             printf("Informe m: ");
             scanf("%d", &m);
 
             printf("Informe n: ");
             scanf("%d", &n);
 
-            int matriz[m][n];
-            break;
+            int mat[m][n];
 
-        case 0:
+            for(int i = 0; i < m; i++){
+                for(int j = 0; j < n; j++){
+                    printf("Informe o valor da posicao [%d][%d]: ", i, j);
+                    scanf("%d", &mat[i][j]);
+                }
+            }
+
+            maior_menor(m, n, mat, &maior, &menor);
+
+            printf("Maior: %d\n", maior);
+            printf("Menor: %d\n", menor);
+        }else if(op == 3){
+
+            printf("Informe m: ");
+            scanf("%d", &m);
+            printf("Informe n: ");
+            scanf("%d", &n);
+
+            int mat[m][n];
+
+            for(int i = 0; i < m; i++){
+                for(int j = 0; j < n; j++){
+                    printf("Informe o valor da posicao [%d][%d]: ", i, j);
+                    scanf("%d", &mat[i][j]);
+                }
+            }
+            if(temNperfeito(m,n, mat)){
+                printf("A matriz possui um numero perfeito!\n");
+            }else{
+                printf("A matriz nao possui um numero perfeito!\n");
+            }
+        }else if (op == 4){
+            printf("Informe m: ");
+            scanf("%d", &m);
+            printf("Informe n: ");
+            scanf("%d", &n);
+
+            int mat[m][n];
+
+            for(int i = 0; i < m; i++){
+                for(int j = 0; j < n; j++){
+                    printf("Informe o valor da posicao [%d][%d]: ", i, j);
+                    scanf("%d", &mat[i][j]);
+                }
+            }
+
+            printf("%d\n", soma_linha(m, n, mat));
+        }else if(op == 0){
             menu = 0;
-            break;
+        }else{
+            printf("Opcao invalida!\n");
         }
-    }
     
+    }
 }
