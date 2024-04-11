@@ -6,11 +6,11 @@
 
 struct TipoItem{
     int codigo;
-    char descrição[50];
+    char descricao[7];
     float valor;
 };
 
-typedef struct TipoCelula *TipoApontador;
+typedef struct TipoCelula* TipoApontador;
 
 struct TipoCelula{
     TipoItem item;
@@ -21,97 +21,15 @@ struct TipoLista{
     TipoApontador primeiro, ultimo;
 };
 
-void FazerListaVazia(TipoLista *Lista){
-    Lista->primeiro = (TipoApontador) malloc(sizeof(struct TipoCelula));
-    Lista->ultimo = Lista->primeiro;
-    Lista->primeiro->Prox = NULL;
-}
+void FazerListaVazia(TipoLista *Lista);
 
-void Insere(TipoItem x, TipoLista *Lista){
-    Lista->ultimo->Prox = (TipoApontador) malloc(sizeof(struct TipoCelula));
-    Lista->ultimo = Lista->ultimo->Prox;
-    Lista->ultimo->item = x;
-    Lista->ultimo->Prox = NULL;
-}
+void inserir(TipoItem x, TipoLista *Lista);
 
-void retira(int p, TipoLista *Lista, TipoItem *Item){
-    TipoApontador Aux, AuxAnt;
-    AuxAnt = Lista->primeiro;
-    Aux = Lista->primeiro->Prox;
-    while(Aux != NULL && Aux->item.codigo != p){
-        AuxAnt = Aux;
-        Aux = Aux->Prox;
-    }
-    if(Aux == NULL || Aux->item.codigo != p){
-        printf("Item não encontrado\n");
-        return;
-    }
-    *Item = Aux->item;
-    AuxAnt->Prox = Aux->Prox;
-    free(Aux);
-}
+void populaLista(TipoLista *Lista);
 
-void Imprime(TipoLista Lista){
-    TipoApontador Aux;
-    Aux = Lista.primeiro->Prox;
-    while(Aux != NULL){
-        printf("Codigo: %d\n", Aux->item.codigo);
-        printf("Descricao: %s\n", Aux->item.descrição);
-        printf("Valor: %.2f\n\n", Aux->item.valor);
-        Aux = Aux->Prox;
-    }
-}
+TipoCelula* EncontrarCarroPorCodigo(TipoLista *Lista, int codigo);
 
-void InsereItem(TipoItem *Item){
-    printf("Digite o código: ");
-    scanf("%d", &Item->codigo);
-    printf("Digite a descrição: ");
-    scanf("%s", Item->descrição);
-    printf("Digite o valor: ");
-    scanf("%f", &Item->valor);
-}
-
-void populaLista(TipoLista *Lista){
-    TipoItem Item;
-
-    for(int i = 0; i < 10; i++){
-        Item.codigo = i;
-        sprintf(Item.descrição, "Item %d", i);
-        Item.valor = i * 10.0;
-        Insere(Item, Lista);
-    }
-
-}
-
-void buscar(TipoLista *Lista, int codigo){
-    TipoApontador Aux;
-    Aux = Lista->primeiro->Prox;
-    while(Aux != NULL && Aux->item.codigo != codigo){
-        Aux = Aux->Prox;
-    }
-    if(Aux == NULL || Aux->item.codigo != codigo){
-        printf("Item não encontrado\n");
-        return;
-    }
-    printf("Codigo: %d\n", Aux->item.codigo);
-    printf("Descricao: %s\n", Aux->item.descrição);
-    printf("Valor: %.2f\n\n", Aux->item.valor);
-}
-
-void soma(TipoLista *Lista){
-    TipoApontador Aux;
-    Aux = Lista->primeiro->Prox;
-    float soma = 0;
-    while(Aux != NULL){
-        soma += Aux->item.valor;
-        Aux = Aux->Prox;
-    }
-    printf("Soma dos valores: %.2f\n", soma);
-}
-
-
-
-
+TipoCelula* EncontrarCarroPorDescricao(TipoLista *Lista, char* descricao);
 
 int main(){
     
@@ -120,45 +38,110 @@ int main(){
 
     populaLista(&Lista);
 
-    while(1){
-        TipoItem Item;
-        printf("1 - Inserir\n");
-        printf("2 - Remover\n");
-        printf("3 - Listar\n");
-        printf("4 - Buscar por codigo\n");
-        printf("5 - Retornar soma dos valores\n");
-        printf("0 - Sair\n");
-        int opcao;
-        scanf("%d", &opcao);
 
-        switch(opcao){
-            case 1:
-                InsereItem(&Item);
-                break;
-            case 2:
-                int codigo;
-                printf("Digite o codigo do item a ser removido: ");
-                scanf("%d", &codigo);
-                retira(codigo, &Lista, &Item);
-                break;
-            case 3:
-                Imprime(Lista);
-                break;
-            case 4:
-                printf("Digite o codigo do item a ser buscado: ");
-                scanf("%d", &codigo);
-                buscar(&Lista, codigo);
-                break;
-            case 5:
-                soma(&Lista);
-                break;
-            case 0:
-                return 0;
-                break;
-            default:
-                printf("Opção inválida\n");
-        }
+    while(1){
+        printf("1-A\n");
+        printf("2-B\n");
+        printf("0-Sair\n");
+
+        int op;
+        scanf("%d", &op);
+
+        if(op == 0){
+            printf("Saindo...\n");
+            system("pause");
+            return 0;
+        }else if(op == 1){
+            int codigo;
+            printf("Digite o codigo do carro: ");
+
+            scanf("%d", &codigo);
+            TipoCelula* carro = EncontrarCarroPorCodigo(&Lista, codigo);
+            if(carro != NULL){
+                printf("Carro encontrado: %s\n", carro->item.descricao);
+            }else{
+                printf("Carro nao encontrado\n");
+            }
+        }else if(op == 2){
+            char straux[7];
+            printf("Digite a descriao do carro:\n");
+            scanf("%s", straux);
+            TipoCelula* carro = EncontrarCarroPorDescricao(&Lista, straux);
+            if(carro != NULL){
+                printf("Carro encontrado: %d\n", carro->item.codigo);
+            }else{
+                printf("Carro nao encontrado!\n");
+            }
+        }else if(op == 3){
+
+        }else{
+            printf("Opcao invalida\n");
+        } 
+
         system("pause");
         system("cls");
     }
+
+
+  
 }
+
+void FazerListaVazia(TipoLista *Lista){
+    Lista->primeiro = (TipoApontador) malloc(sizeof(struct TipoCelula));
+    Lista->ultimo = Lista->primeiro;
+    Lista->primeiro->Prox = NULL;
+}
+
+void inserir(TipoItem x, TipoLista *Lista){
+    Lista->ultimo->Prox = (TipoApontador) malloc(sizeof(struct TipoCelula));
+    Lista->ultimo = Lista->ultimo->Prox;
+    Lista->ultimo->item = x;
+    Lista->ultimo->Prox = NULL;
+}
+
+void populaLista(TipoLista *Lista){
+    TipoItem Item;
+
+    for(int i = 0; i < 10; i++){
+        Item.codigo = i;
+        sprintf(Item.descricao, "Item %d", i);
+        Item.valor = i * 10.0;
+        inserir(Item, Lista);
+    }
+
+}
+
+TipoCelula* EncontrarCarroPorCodigo(TipoLista *Lista, int codigo){
+    TipoCelula* celulaAtual = Lista->primeiro;
+    while(celulaAtual != NULL){
+        if(celulaAtual -> item.codigo == codigo){
+            return celulaAtual;
+        }
+        celulaAtual = celulaAtual -> Prox;
+    }
+    return NULL;
+}
+
+TipoCelula* EncontrarCarroPorDescricao(TipoLista *Lista, char* descricao){
+    TipoCelula* celulaAtual = Lista->primeiro;
+    while(celulaAtual != NULL){
+        if(strcmp(celulaAtual->item.descricao, descricao)){
+            return celulaAtual;
+        }
+        celulaAtual = celulaAtual->Prox;
+    }
+    return NULL;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
