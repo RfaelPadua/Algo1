@@ -23,11 +23,17 @@ void PopularLista(TipoLista *Lista);
 void Insere(TipoItem item, TipoLista *Lista);
 void ImprimeLista(TipoLista *Lista);
 void ImprimeItem(TipoItem item);
+void ListaVazia(TipoLista *Lista);
+void Retira(int p, TipoLista *Lista, TipoItem x);
 
 float SomaValor(TipoLista *Lista);
 float MediaValor(TipoLista *Lista);
 TipoItem MaisCaro(TipoLista *Lista);
 int MontadoraEstaPresente(char *montadora, TipoLista *Lista);
+void Retira(int p, TipoLista *Lista);
+
+int RetiraMontadora(char *montadora, TipoLista *Lista);
+int RetiraModelo(char *modelo, TipoLista *Lista);
 
 int main(){
     TipoLista lista;
@@ -54,6 +60,21 @@ int main(){
     }else{
         printf("O Carra da %s esta na posicao %d.\n", montadoraInput1, aux);
     }
+
+    aux = 12;
+
+    Retira(aux, &lista);
+
+    aux = 2;
+
+    char auxchar[50] = "Montadora 0";
+
+    Retira(aux, &lista);
+
+    //RetiraMontadora(auxchar, &lista);
+
+    ImprimeLista(&lista);
+
 
 }
 
@@ -145,7 +166,44 @@ int MontadoraEstaPresente(char *montadora, TipoLista *Lista){
     return -1;
 }
 
+void ListaVazia(TipoLista *Lista){
+    if(Lista->Primeiro == Lista->Ultimo)
+        printf("Lista Vazia\n");
+    return; 
+}/*ListaVazia*/
 
+void Retira(int p, TipoLista *Lista){
+    ListaVazia(Lista);
+
+    int i;
+
+    if(p > Lista->Ultimo){
+        printf("Posicao invalida\n\n");
+        return;
+    }
+
+    for(i = p; i < Lista->Ultimo-1; i++){
+        Lista->Item[p] = Lista->Item[p+1];
+    }
+
+    Lista->Ultimo--;
+
+}
+
+int RetiraMontadora(char *montadora, TipoLista *Lista){
+    int i;
+
+    for(i = Lista->Primeiro; i < Lista->Ultimo; i++){
+        if(!strcmp(montadora, Lista->Item[i].montadora)){
+            Retira(i, Lista);
+            return 0;
+        }
+    }
+    return -1;
+}
+
+
+int RetiraModelo(char *modelo, TipoLista *Lista);
 
 
 
