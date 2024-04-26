@@ -24,7 +24,7 @@ void Insere(TipoItem item, TipoLista *Lista);
 void ImprimeLista(TipoLista *Lista);
 void ImprimeItem(TipoItem item);
 void ListaVazia(TipoLista *Lista);
-void Retira(int p, TipoLista *Lista, TipoItem x);
+void Retira(int p, TipoLista *Lista);
 
 float SomaValor(TipoLista *Lista);
 float MediaValor(TipoLista *Lista);
