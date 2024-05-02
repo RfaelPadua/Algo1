@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 
 #define InicioArranjo 0
 #define MaxTam 1000
@@ -34,6 +35,9 @@ void Retira(int p, TipoLista *Lista);
 
 int RetiraMontadora(char *montadora, TipoLista *Lista);
 int RetiraModelo(char *modelo, TipoLista *Lista);
+int UltimaLetraModeloVogal(TipoLista *Lista);
+int MaiorLista(TipoLista *Lista1, TipoLista *Lista2);
+
 
 int main(){
     TipoLista lista;
@@ -71,7 +75,7 @@ int main(){
 
     Retira(aux, &lista);
 
-    //RetiraMontadora(auxchar, &lista);
+    RetiraMontadora(auxchar, &lista);
 
     ImprimeLista(&lista);
 
@@ -188,7 +192,7 @@ void Retira(int p, TipoLista *Lista){
 
     Lista->Ultimo--;
 
-}
+}/*Retira*/
 
 int RetiraMontadora(char *montadora, TipoLista *Lista){
     int i;
@@ -200,14 +204,50 @@ int RetiraMontadora(char *montadora, TipoLista *Lista){
         }
     }
     return -1;
-}
+}/*RetiraMontadora*/
 
 
-int RetiraModelo(char *modelo, TipoLista *Lista);
+int RetiraModelo(char *modelo, TipoLista *Lista){
+    int i;
+
+    for(i = Lista->Primeiro; i < Lista->Ultimo; i++){
+        if(!strcmp(modelo, Lista->Item[i].montadora)){
+            Retira(i, Lista);
+            return 0;
+        }
+    }
+    return -1;
+}/*RetiraModelo*/
 
 
+int UltimaLetraModeloVogal(TipoLista *Lista){
+    char vogal[6] = "aeiou";
+    int i, j, k;
 
+    for(i = Lista->Primeiro; i < Lista->Ultimo; i++){
+        for(j = 0; Lista->Item[i].modelo[j] != '\0'; j++){
+            if(Lista->Item[i].modelo[j+1] == '\0'){
+                for(k = 0; k < 5; k++){
+                    if(tolower(Lista->Item[i].modelo[j]) == vogal[k]){
+                        return 1;
+                    }
+                }
+                return 0;
+            }
+        }
+    }
+    return 0;
+}/*UltimaLetraModeloVogal*/
 
+int MaiorLista(TipoLista *Lista1, TipoLista *Lista2){
+    if(Lista1->Ultimo > Lista2->Ultimo){
+        return 1;
+    }else if(Lista1->Ultimo < Lista2->Ultimo){
+        return 2;
+    }else{
+        return 0;
+    }
+}/*MaiorLista*/
 
 
 
