@@ -2,6 +2,7 @@
 #include <string.h>
 
 #define MAXTAM 100
+#define INT_MIN -2147483648
 
 typedef int TipoApontador, TipoChave;
 
@@ -53,7 +54,7 @@ int testarParidadeParenteses(const char* expressao) {
             empilha(&pilha, item);
         } else if (expressao[i] == ')') {
             if (pilha.topo == 0) {
-                return 0; // Parênteses desbalanceados
+                return 0; 
             } else {
                 desempilha(&pilha);
             }
@@ -61,9 +62,9 @@ int testarParidadeParenteses(const char* expressao) {
     }
 
     if (pilha.topo == 0) {
-        return 1; // Parênteses balanceados
+        return 1; 
     } else {
-        return 0; // Parênteses desbalanceados
+        return 0; 
     }
 }
 
@@ -88,7 +89,7 @@ void inverterString(const char* palavra, TipoPilha* pilha) {
 
 int pilhasIguais(TipoPilha* pilha1, TipoPilha* pilha2) {
     if (pilha1->topo != pilha2->topo) {
-        return 0; // Pilhas têm tamanhos diferentes
+        return 0; 
     }
 
     while (pilha1->topo > 0) {
@@ -96,11 +97,11 @@ int pilhasIguais(TipoPilha* pilha1, TipoPilha* pilha2) {
         TipoItem item2 = desempilha(pilha2);
 
         if (item1.chave != item2.chave) {
-            return 0; // Pilhas têm elementos diferentes
+            return 0; 
         }
     }
 
-    return 1; // Pilhas são iguais
+    return 1; 
 }
 
 void erguePilha(TipoPilha* pilha, TipoApontador p, TipoItem item) {
@@ -131,7 +132,7 @@ int pilhaEmOrdemCrescente(TipoPilha* pilha) {
         empilha(&aux, item);
 
         if (item.chave < valorAnterior) {
-            return 0; // Pilha não está em ordem crescente
+            return 0; 
         }
 
         valorAnterior = item.chave;
@@ -142,7 +143,7 @@ int pilhaEmOrdemCrescente(TipoPilha* pilha) {
         empilha(pilha, item);
     }
 
-    return 1; // Pilha está em ordem crescente
+    return 1; 
 }
 
 int itemPresenteEmAmbasPilhas(TipoPilha* pilha1, TipoPilha* pilha2, TipoItem item) {
@@ -182,15 +183,15 @@ int itemPresenteEmAmbasPilhas(TipoPilha* pilha1, TipoPilha* pilha2, TipoItem ite
     }
 
     if (encontrado1 && encontrado2) {
-        return 1; // Item presente nas duas pilhas
+        return 1; 
     } else {
-        return 0; // Item não presente em ambas as pilhas
+        return 0; 
     }
 }
 
 int pilhasIguaisDesempilha(TipoPilha* pilha1, TipoPilha* pilha2) {
     if (pilha1->topo != pilha2->topo) {
-        return 0; // Pilhas têm tamanhos diferentes
+        return 0; 
     }
 
     TipoPilha aux1, aux2;
@@ -207,7 +208,7 @@ int pilhasIguaisDesempilha(TipoPilha* pilha1, TipoPilha* pilha2) {
         empilha(&aux2, item2);
 
         if (item1.chave != item2.chave) {
-            iguais = 0; // Pilhas têm elementos diferentes
+            iguais = 0; 
         }
     }
 
@@ -221,7 +222,7 @@ int pilhasIguaisDesempilha(TipoPilha* pilha1, TipoPilha* pilha2) {
         empilha(pilha2, item2);
     }
 
-    return iguais; // Pilhas são iguais ou diferentes
+    return iguais;
 }
 
 
@@ -230,7 +231,7 @@ int main(){
     FazerPilhaVazia(&pilha1);
     FazerPilhaVazia(&pilha2);
 
-    // Testar a função empilha
+    // Testar a funçao empilha
     TipoItem item1;
     item1.chave = 1;
     empilha(&pilha1, item1);
@@ -243,11 +244,11 @@ int main(){
     item3.chave = 3;
     empilha(&pilha1, item3);
 
-    // Testar a função desempilha
+    // Testar a funçao desempilha
     TipoItem itemDesempilhado = desempilha(&pilha1);
     printf("Item desempilhado: %d\n", itemDesempilhado.chave);
 
-    // Testar a função testarParidadeParenteses
+    // Testar a funçao testarParidadeParenteses
     const char* expressao1 = "((()))";
     int paridade1 = testarParidadeParenteses(expressao1);
     printf("Paridade da expressao 1: %d\n", paridade1);
@@ -256,56 +257,56 @@ int main(){
     int paridade2 = testarParidadeParenteses(expressao2);
     printf("Paridade da expressao 2: %d\n", paridade2);
 
-    // Testar a função empilharVogais
+    // Testar a funçao empilharVogais
     const char* palavra1 = "Hello World";
     empilharVogais(palavra1, &pilha1);
 
-    const char* palavra2 = "GitHub Copilot";
+    const char* palavra2 = "Rafael de Padua";
     empilharVogais(palavra2, &pilha2);
 
-    // Testar a função inverterString
+    // Testar a funçao inverterString
     const char* palavra3 = "Hello World";
     inverterString(palavra3, &pilha1);
 
-    const char* palavra4 = "GitHub Copilot";
+    const char* palavra4 = "Rafael de Padua";
     inverterString(palavra4, &pilha2);
 
-    // Testar a função pilhasIguais
+    // Testar a funçao pilhasIguais
     int iguais1 = pilhasIguais(&pilha1, &pilha2);
-    printf("Pilhas 1 e 2 são iguais: %d\n", iguais1);
+    printf("Pilhas 1 e 2 sao iguais: %d\n", iguais1);
 
     int iguais2 = pilhasIguais(&pilha1, &pilha1);
-    printf("Pilhas 1 e 1 são iguais: %d\n", iguais2);
+    printf("Pilhas 1 e 1 sao iguais: %d\n", iguais2);
 
-    // Testar a função erguePilha
+    // Testar a funçao erguePilha
     TipoItem item4;
     item4.chave = 4;
     erguePilha(&pilha1, 1, item4);
 
-    // Testar a função pilhaEmOrdemCrescente
+    // Testar a funçao pilhaEmOrdemCrescente
     int ordem1 = pilhaEmOrdemCrescente(&pilha1);
-    printf("Pilha 1 está em ordem crescente: %d\n", ordem1);
+    printf("Pilha 1 esta em ordem crescente: %d\n", ordem1);
 
     int ordem2 = pilhaEmOrdemCrescente(&pilha2);
-    printf("Pilha 2 está em ordem crescente: %d\n", ordem2);
+    printf("Pilha 2 esta em ordem crescente: %d\n", ordem2);
 
-    // Testar a função itemPresenteEmAmbasPilhas
+    // Testar a funçao itemPresenteEmAmbasPilhas
     TipoItem item5;
     item5.chave = 5;
     int presente1 = itemPresenteEmAmbasPilhas(&pilha1, &pilha2, item5);
-    printf("Item 5 está presente nas duas pilhas: %d\n", presente1);
+    printf("Item 5 esta presente nas duas pilhas: %d\n", presente1);
 
     TipoItem item6;
     item6.chave = 6;
     int presente2 = itemPresenteEmAmbasPilhas(&pilha1, &pilha2, item6);
-    printf("Item 6 está presente nas duas pilhas: %d\n", presente2);
+    printf("Item 6 esta presente nas duas pilhas: %d\n", presente2);
 
-    // Testar a função pilhasIguaisDesempilha
+    // Testar a funçao pilhasIguaisDesempilha
     int iguaisDesempilha1 = pilhasIguaisDesempilha(&pilha1, &pilha2);
-    printf("Pilhas 1 e 2 são iguais (desempilhando): %d\n", iguaisDesempilha1);
+    printf("Pilhas 1 e 2 sao iguais (desempilhando): %d\n", iguaisDesempilha1);
 
     int iguaisDesempilha2 = pilhasIguaisDesempilha(&pilha1, &pilha1);
-    printf("Pilhas 1 e 1 são iguais (desempilhando): %d\n", iguaisDesempilha2);
+    printf("Pilhas 1 e 1 sao iguais (desempilhando): %d\n", iguaisDesempilha2);
 
     return 0;
 }
