@@ -2,8 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-
 struct TipoItem{
     int codigo;
     char descricao[7];
