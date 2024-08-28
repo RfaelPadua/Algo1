@@ -67,6 +67,17 @@ void FuraPilha(TipoPilha *pilha, TipoApontador p, TipoItem item){
     pilha->Tamanho++;
 }
 
+void FuraPilhaAntes(TipoPilha *pilha, TipoApontador p, TipoItem item){
+    /*insere um item recebido antes da posição apontada por p*/
+    TipoApontador aux;
+    aux = (TipoApontador) malloc(sizeof(TipoCelula));
+    aux->Item = p->Item;
+    p->Item = item;
+    aux->Prox = p->Prox;
+    p->Prox = aux;
+    pilha->Tamanho++;
+}
+
 int main(){
     //testar a função FuraPilha
     TipoPilha pilha;
