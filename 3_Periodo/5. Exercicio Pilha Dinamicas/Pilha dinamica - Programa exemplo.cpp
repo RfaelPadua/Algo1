@@ -97,4 +97,11 @@ main(){
 	item.chave='c';
 	TipoApontador p = busca(pilha, item);
 	printf("\n\n\nTeste = %c\n", p->Item.chave);
-}
+}	
+
+
+
+
+
+
+
