@@ -78,17 +78,90 @@ int CalculaQtdItensFila(TipoFila fila){
 	
 	return quantidade;
 }
-
-void OrganizaFilaEspera(TipoFila *fila){
-	TipoApontador aux;
+void retiraCarroFilaEspera(TipoFila *filaEspera, TipoItem *item){
+	TipoApontador aux, q;
 	
-	aux = fila->Frente->Prox;
-	while(aux != NULL){
-		
+	
+	aux = filaEspera->Frente;
+	if(aux->Prox->Item.prioridade == 1){
+		Desenfileira(filaEspera, item);
+	} else{
+		aux = aux->Prox;
+		while(aux->Prox != NULL){
+			if(aux->Prox->Item.prioridade == 1){
+				q = aux->Prox;
+				*item = aux->Prox->Item;
+				aux->Prox = aux->Prox->Prox;
+				free(q);
+				
+				//Verificando se por acaso a célula que foi retirada junto do item não é a célula que demarca a parte de Tras da fila:
+				if(aux->Prox == NULL){
+					filaEspera->Tras = aux;
+				}
+				
+				/*Como queremos retornar apenas o primeiro carro na fila que possui prioridade '1', o percorrimento da fila é interrompido para que não aconteça 
+				de ter outro carro com prioridade '1' e este ser sobreescrito no retorno da função pelo '*item'*/
+				break;
+			}
+			
+			aux = aux->Prox;
+		}
 	}
+	
+	
 }
 
 
+int CarroEstacionado(TipoFila fila, char *placa){
+    TipoApontador aux;
+    int achou = 1;
+
+    aux = fila.Frente->Prox;
+
+    while(aux != NULL || achou == 0){
+        achou = strcmp(aux->Item.placa, placa);
+        aux = aux->Prox;
+    }
+
+    return !achou;
+}
+
+void exibirItem(TipoItem item){
+    printf("\nPlaca==%s | Deslocamento==%d | Prioridade==%d", item.placa, item.deslocamento, item.prioridade);
+}
+
+void exibirRelarotio(TipoFila filaEstacionamento, TipoFila filaEspera){
+    printf("\n-- Relatorio --\n");
+    printf("\n-- Estacionamento --\n");
+    Exibe(filaEstacionamento);
+    printf("\n-- Fila de Espera --\n");
+    Exibe(filaEspera);
+}
+
+// void PopularFilaEstacionamento(TipoFila *filaEstacionamento){
+//     TipoItem item;
+//     char placa[10];
+//     int i;
+
+//     //gerei 5 placas aleatórias para popular a fila de estacionamento
+//     item
+    
+// }
+
+void PopularFilaEspera(TipoFila *filaEspera){
+    TipoItem item;
+    char placa[10];
+    int i;
+
+    //gerei 5 placas aleatórias para popular a fila de espera
+    for(i = 0; i < 5; i++){
+        sprintf(placa, "ABC-%d", i*10);
+        strcpy(item.placa, placa);
+        item.deslocamento = 0;
+        item.prioridade = 0;
+        Enfileira(item, filaEspera);
+    }
+}
 
 int main(){
 	//Filas e Itens que auxiliar�o na manipula��o e organiza��o dos estacionamentos
@@ -106,6 +179,12 @@ int main(){
     FFVazia(&filaEspera);
     FFVazia(&filaAuxiliar);
     FFVazia(&filaEstacionamento);
+
+    //Populando a fila de estacionamento com 5 carros
+    //PopularFilaEstacionamento(&filaEstacionamento);
+
+    //Populando a fila de espera com 5 carros
+    //PopularFilaEspera(&filaEspera);
 
 	//Menu
     do{
@@ -130,13 +209,16 @@ int main(){
 	            //Coletando informa��es do carro:
 	            printf("-- Dados do carro --\n\n");
 	            printf(". Informe a placa do carro: ");
-	            gets(item.placa);
+                fgets(item.placa, 10, stdin);
+                item.placa[strlen(item.placa) - 1] = '\0';
+
 	            
 	            do{
 	            	verificador = 0;
 	            	
 	            	printf(". Voce possui prioridade para estacionar? ");
-	            	gets(resposta);
+	            	fgets(resposta, 4, stdin);
+                    resposta[strlen(resposta) - 1] = '\0';
 	            	
 	            	if(strcmp(resposta, "Sim") == 0 || strcmp(resposta, "sim") == 0){
 		            	item.prioridade = 1;
@@ -174,25 +256,50 @@ int main(){
                 // Quando um carro partir, a mensagem devera incluir o numero de vezes que 
                 // o carro foi deslocado dentro do estacionamento, incluindo a propria partida, 
                 // mas não a chegada
-                printf("-- Saida de veiculo --/n");
-                printf("\nInforme a placa do veiculo: ");
-                gets(item.placa);
+                char placa[10];
 
-                /*
-                  while(não achar o carro)
-				  	verifica se carro está no estacionamento
-					Desinfeleira 
-					deslocamento++
-					carro desenfileirado é o carro que vai sair?
-						printf(informações do carro)
-						print(Relatoria da situacao do estacionamento)
-					Enfileira o carro na fila auxiliar
-					
-                */
+                printf("-- Saida de veiculo --\n");
+                printf("\nInforme a placa do veiculo: "); 
+                fgets(placa, 10, stdin);
+                placa[strlen(placa) - 1] = '\0';
+
+
+                do{
+                    verificador = 0;
+                    if(FilaVazia(filaEstacionamento) | CarroEstacionado(filaEstacionamento, placa)){
+                        printf("O Seu carro nao esta estacionado na Tv. Sr. Bom Jesus dos Passos\n");
+                        break;
+                    }
+
+                    Desenfileira(&filaEstacionamento, &item);
+                    item.deslocamento++;
+
+                    if(strcmp(item.placa, placa)){
+                        printf("-- Carro --\n");
+                        exibirItem(item);
+                        printf("-- Retirado --\n");
+                        exibirRelarotio(filaEstacionamento, filaEspera);
+                        verificador = 1;
+
+                    }else{
+                        Enfileira(item, &filaAuxiliar);
+                    }
+                }while(verificador == 0);
+
+                while(!FilaVazia(filaAuxiliar)){
+                    Desenfileira(&filaAuxiliar, &item);
+                    Enfileira(item, &filaEstacionamento);
+                }
+
+                //retiraCarroFilaEspera(&filaEspera, &item);
+                Enfileira(item, &filaEstacionamento);
+
+                printf("-- O Carro --");
+                exibirItem(item);
+                printf("-- Foi Estacionado --");
 
 			   
 
-                
                 
                 
                 break;
@@ -203,7 +310,7 @@ int main(){
                 break;
             default:
                 printf("Opcao invalida\n");
-
+                break;
         }
         
 
