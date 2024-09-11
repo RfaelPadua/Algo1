@@ -154,6 +154,7 @@ void PopularFilaEstacionamento(TipoFila *filaEstacionamento){
     for(i = 0; i < 5; i++){
         sprintf(placa, "ABC%d", i);
         strcpy(item.placa, placa);
+        
         item.deslocamento = 0;
         item.prioridade = 0;
         Enfileira(item, filaEstacionamento);
