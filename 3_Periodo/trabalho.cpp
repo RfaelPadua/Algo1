@@ -74,6 +74,7 @@ int CalculaQtdItensFila(TipoFila fila){
 	aux = fila.Frente->Prox;
 	while(aux != NULL){
 		quantidade ++;
+        aux = aux->Prox;
 	}
 	
 	return quantidade;
@@ -112,18 +113,24 @@ void retiraCarroFilaEspera(TipoFila *filaEspera, TipoItem *item){
 }
 
 
-int CarroEstacionado(TipoFila fila, char *placa){
+int CarroEstacionado(TipoFila *fila, char *placa){
     TipoApontador aux;
-    int achou = 1;
+    int achou = 0;
 
-    aux = fila.Frente->Prox;
+    aux = fila->Frente->Prox;
 
-    while(aux != NULL || achou == 0){
-        achou = strcmp(aux->Item.placa, placa);
+    if(FilaVazia(*fila)){
+        return 0;
+    }
+
+    while(aux != NULL &&  achou == 0){
+        if(strcmp(aux->Item.placa, placa) == 0){
+            achou = 1;
+        }
         aux = aux->Prox;
     }
 
-    return !achou;
+    return achou;
 }
 
 void exibirItem(TipoItem item){
@@ -131,22 +138,27 @@ void exibirItem(TipoItem item){
 }
 
 void exibirRelarotio(TipoFila filaEstacionamento, TipoFila filaEspera){
-    printf("\n-- Relatorio --\n");
-    printf("\n-- Estacionamento --\n");
+    printf("\n\t\t-- Relatorio --\n");
+    printf("\n\t  -- Estacionamento --");
     Exibe(filaEstacionamento);
-    printf("\n-- Fila de Espera --\n");
+    printf("\n\n\t  -- Fila de Espera --");
     Exibe(filaEspera);
 }
 
-// void PopularFilaEstacionamento(TipoFila *filaEstacionamento){
-//     TipoItem item;
-//     char placa[10];
-//     int i;
+void PopularFilaEstacionamento(TipoFila *filaEstacionamento){
+    TipoItem item;
+    char placa[10];
+    int i;
 
-//     //gerei 5 placas aleatórias para popular a fila de estacionamento
-//     item
-    
-// }
+    //gerei 5 placas aleatórias para popular a fila de estacionamento
+    for(i = 0; i < 5; i++){
+        sprintf(placa, "ABC%d", i);
+        strcpy(item.placa, placa);
+        item.deslocamento = 0;
+        item.prioridade = 0;
+        Enfileira(item, filaEstacionamento);
+    }
+}
 
 void PopularFilaEspera(TipoFila *filaEspera){
     TipoItem item;
@@ -154,8 +166,8 @@ void PopularFilaEspera(TipoFila *filaEspera){
     int i;
 
     //gerei 5 placas aleatórias para popular a fila de espera
-    for(i = 0; i < 5; i++){
-        sprintf(placa, "ABC-%d", i*10);
+    for(i = 1; i < 6; i++){
+        sprintf(placa, "ABC%d", i*10);
         strcpy(item.placa, placa);
         item.deslocamento = 0;
         item.prioridade = 0;
@@ -181,10 +193,10 @@ int main(){
     FFVazia(&filaEstacionamento);
 
     //Populando a fila de estacionamento com 5 carros
-    //PopularFilaEstacionamento(&filaEstacionamento);
+    PopularFilaEstacionamento(&filaEstacionamento);
 
     //Populando a fila de espera com 5 carros
-    //PopularFilaEspera(&filaEspera);
+    PopularFilaEspera(&filaEspera);
 
 	//Menu
     do{
@@ -192,6 +204,7 @@ int main(){
         printf("\t-- Escolha uma opcao --\n\n");
         printf("1. Estacionar um Carro\n");
         printf("2. Retirar um Carro\n");
+        printf("3. Exibir Relatorio\n");
         printf("0. Sair\n");
         printf("------------------\n");
         printf("R: ");
@@ -217,8 +230,7 @@ int main(){
 	            	verificador = 0;
 	            	
 	            	printf(". Voce possui prioridade para estacionar? ");
-	            	fgets(resposta, 4, stdin);
-                    resposta[strlen(resposta) - 1] = '\0';
+	            	scanf("%3s", resposta);
 	            	
 	            	if(strcmp(resposta, "Sim") == 0 || strcmp(resposta, "sim") == 0){
 		            	item.prioridade = 1;
@@ -248,11 +260,11 @@ int main(){
 					printf("\nR: Como a Tv. Sr. Bom Jesus dos Passos esta cheia, seu carro esta aguardando na Tv. Monsenhor Joao Pedro.\n\n");
 				}
 				
-				system("pause");
+				
 
                 break;
             case 2:
-	                            // Saida de um carro
+	            // Saida de um carro
                 // Quando um carro partir, a mensagem devera incluir o numero de vezes que 
                 // o carro foi deslocado dentro do estacionamento, incluindo a propria partida, 
                 // mas não a chegada
@@ -260,48 +272,64 @@ int main(){
 
                 printf("-- Saida de veiculo --\n");
                 printf("\nInforme a placa do veiculo: "); 
-                fgets(placa, 10, stdin);
-                placa[strlen(placa) - 1] = '\0';
-
+                scanf("%9s", placa);
 
                 do{
                     verificador = 0;
-                    if(FilaVazia(filaEstacionamento) | CarroEstacionado(filaEstacionamento, placa)){
-                        printf("O Seu carro nao esta estacionado na Tv. Sr. Bom Jesus dos Passos\n");
+                    // Verifica se o carro esta estacionado na Tv. Sr. Bom Jesus dos Passos
+                    if(FilaVazia(filaEstacionamento) || !CarroEstacionado(&filaEstacionamento, placa)){
+                        printf("\nO Seu carro nao esta estacionado na Tv. Sr. Bom Jesus dos Passos\n");
+                        system("pause");
                         break;
                     }
 
+                    // Retira o carro da fila de estacionamento
                     Desenfileira(&filaEstacionamento, &item);
                     item.deslocamento++;
-
-                    if(strcmp(item.placa, placa)){
-                        printf("-- Carro --\n");
+                    
+                    // Se carro retirado da fila de estacionamento eh o carro que vai sair
+                    // Então exibe as informacoes do carro e finaliza o loop
+                    // Caso contrário, o carro eh enfileirado na fila auxiliar
+                    if(strcmp(item.placa, placa) == 0){
+                        printf("\t\t-- Carro --");
                         exibirItem(item);
-                        printf("-- Retirado --\n");
-                        exibirRelarotio(filaEstacionamento, filaEspera);
+                        printf("\n\t\t-- Retirado --\n");
+                        system("pause");
                         verificador = 1;
 
                     }else{
                         Enfileira(item, &filaAuxiliar);
                     }
+
+
                 }while(verificador == 0);
 
+
+                // Reorganiza a fila de estacionamento
                 while(!FilaVazia(filaAuxiliar)){
                     Desenfileira(&filaAuxiliar, &item);
                     Enfileira(item, &filaEstacionamento);
                 }
 
-                //retiraCarroFilaEspera(&filaEspera, &item);
-                Enfileira(item, &filaEstacionamento);
+                // Verifica se existe carro na fila de espera e tem vaga na fila de estacionamento
+                // Se sim, o carro da fila de espera eh estacionado na fila de estacionamento
+                if (!FilaVazia(filaEspera) && CalculaQtdItensFila(filaEstacionamento) < 5){
+                    retiraCarroFilaEspera(&filaEspera, &item);
+                    Enfileira(item, &filaEstacionamento);
+                    printf("\n\t\t-- O Carro --");
+                    exibirItem(item);
+                    printf("\n\t\t-- Foi Estacionado --\n");
+                    system("pause");
+                }
 
-                printf("-- O Carro --");
-                exibirItem(item);
-                printf("-- Foi Estacionado --");
-
-			   
-
+                exibirRelarotio(filaEstacionamento, filaEspera);
                 
                 
+                break;
+            case 3:
+                system("cls");
+                exibirRelarotio(filaEstacionamento, filaEspera);
+                printf("\n");
                 break;
             case 0:
                 printf("Saindo...\n");
@@ -313,7 +341,8 @@ int main(){
                 break;
         }
         
-
+        printf("\n");
+        system("pause");
         system("cls");
 
     }while(opcao != 0);
