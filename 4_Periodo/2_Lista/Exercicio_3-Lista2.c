@@ -13,7 +13,7 @@ int SearchBin(int vetor[], int key, int tamanho);
 
 int main(){
     int tamanho = 1000000;
-    int vetor[tamanho];
+    int *vetor = (int *)malloc(tamanho * sizeof(int)); // Alocação dinâmica de memória 
     int chave, resultado;
 
     clock_t inicio, fim;
@@ -37,17 +37,18 @@ int main(){
         printf("\n\tPor Busca Sequencial\nO Numero %d nao esta presente no vetor\n", chave);
     }
     printf("Tempo de busca por Busca Sequencial: %lu milissegundos\n", tempo);
+    // O tempo de busca sequencial foi de 0 milissegundos
 
 
     chave++;
     inicio = clock();
 
-    BubbleSort(&vetor, tamanho);
+    BubbleSort(vetor, tamanho);
     resultado = SearchBin(vetor, chave, tamanho);
 
     fim = clock();
     tempo = (fim - inicio)*1000/CLOCKS_PER_SEC;
-    printf("Tempo de busca por Busca Binaria: %lu milissegundos\n", tempo);
+
 
    if(resultado){
         printf("\n\n\t\nPor Busca Binaria\nO Numero %d esta presente no vetor\n", chave);
@@ -55,8 +56,8 @@ int main(){
         printf("\n\tPor Busca Binaria\nO Numero %d nao esta presente no vetor\n", chave);
     }
     
-
-
+    printf("Tempo de busca por Busca Binaria: %lu milissegundos\n", tempo);
+    // O tempo de busca binária foi de 2064668 milissegundos, pois o vetor não estava ordenado e a busca binária só funciona com vetores ordenados
 }
 
 void FillAleatory(int *vetor, int tamanho){

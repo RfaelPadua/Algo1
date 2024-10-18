@@ -226,6 +226,13 @@ int main(){
 	            printf(". Informe a placa do carro: ");
                 fgets(item.placa, 10, stdin);
                 item.placa[strlen(item.placa) - 1] = '\0';
+                //verificar se a placa é 7 digitos sendo 3 letras e 4 números
+                while(strlen(item.placa) != 7){
+                    printf("\nR: PLACA INVALIDA!\n\n");
+                    printf(". Informe a placa do carro: ");
+                    fgets(item.placa, 10, stdin);
+                    item.placa[strlen(item.placa) - 1] = '\0';
+                }
 
 	            
 	            do{
