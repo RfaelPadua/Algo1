@@ -7,6 +7,15 @@ public class Conversation {
         Scanner scanner = new Scanner(System.in);
 
         // Write your program here
+        System.out.println("Greetings! How are you doing?");
+
+        String mensagem = scanner.nextLine();
+
+        System.out.println("Oh, how interesting. Tell me more!");
+
+        mensagem = scanner.nextLine();
+
+        System.out.println("Thanks for sharing!");
 
     }
 }

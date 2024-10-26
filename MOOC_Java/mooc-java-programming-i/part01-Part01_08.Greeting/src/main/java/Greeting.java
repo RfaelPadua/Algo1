@@ -7,6 +7,11 @@ public class Greeting {
         Scanner scanner = new Scanner(System.in);
 
         // Write your program here
+        System.out.println("What's your name?");
+
+        String mensagem = scanner.nextLine();
+
+        System.out.println("Hi " + mensagem);
 
     }
 }

@@ -3,6 +3,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "AdaLovelace",
+      "request": "launch",
+      "mainClass": "AdaLovelace",
+      "projectName": "Part01_02.AdaLovelace"
+    },
+    {
+      "type": "java",
       "name": "Sandbox",
       "request": "launch",
       "mainClass": "Sandbox",
