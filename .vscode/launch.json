@@ -3,6 +3,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "DoubleInput",
+      "request": "launch",
+      "mainClass": "DoubleInput",
+      "projectName": "Part01_13.DoubleInput"
+    },
+    {
+      "type": "java",
       "name": "AdaLovelace",
       "request": "launch",
       "mainClass": "AdaLovelace",
