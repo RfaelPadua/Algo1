@@ -32,8 +32,13 @@ void binarioParaDecimal(char *parteBinaria, char *numeroDecimal, int precisao);
 // Function prototype for aplicarRepresentacoesNegativas
 void aplicarRepresentacoesNegativas(char *mantissa, int m, char *complemento1, char *complemento2);
 
+// função para aplicar representações negativas só na parte inteira do binário
+void aplicarRepresentacoesNegativas2(char *parteInteira, char *complemento1, char *complemento2);
+
 // função para tirar o bit da normalização
 void tirarBitNormalizacao(char *mantissa, int expoente, char *parteInteira, char *parteDecimal);
+
+void converterBinarioParaNumero(char *mantissa, int expoente, char *numero);
 
 
 
@@ -41,55 +46,27 @@ void tirarBitNormalizacao(char *mantissa, int expoente, char *parteInteira, char
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     setlocale(LC_ALL, "pt_BR.UTF-8");
-    system("cls");
 
-    char mantissa[128];
-    char num[128] = "12.5";
-    char parteInteira[128];
-    char parteDecimal[128];
-    char sinal = '1';
-    int m = 10;
+
+
     
 
-    converterNumeroParaBinario(num, parteInteira, parteDecimal);
-    int expoente = calcularExpoente(parteInteira, parteDecimal);
 
-    normalizarNumero(parteInteira, parteDecimal, mantissa, m);
-
-    // Normalizar o número
-    printf("Número normalizado armazenado em binário: ");
-    printf("%c ", sinal);
-    printf("0.%s ", mantissa);
-    printf("x 2^%d\n", expoente);
-    char sinalAmplitude[128];
-    char complemento1[128];
-    char complemento2[128];
-    if(sinal == '1'){
-        aplicarRepresentacoesNegativas(mantissa, m, sinalAmplitude, complemento1, complemento2);
-    }
-    printf("parteInteira: %s\n", parteInteira);
-    printf("parteDecimal: %s\n", parteDecimal);
-    tirarBitNormalizacao(mantissa, expoente, parteInteira, parteDecimal);
-
-    binarioParaInteiro(parteInteira, num);
-    printf("Parte inteira: %s\n", num);
-    binarioParaDecimal(parteDecimal, num, 100);
-    printf("Parte decimal: %s\n", num);
-    goto fimTeste;
-
-    int programaEstaRodando = 1;
-    while(programaEstaRodando){
+    while(1){
         int m, l, u;
         // m = número de casas da mantissa
         // l = menor valor do expoente
         // u = maior valor do expoente
+
+        menuPrincipal:
+        system("cls");
         printf("\tF(β,m,l,u)\n");
-        printf("Digite o valor da mantissa(m): ");
-        scanf("%d", &m);
+        printf("Digite a quantidade de casas da mantissa(m): ");
+        scanf("%d", &m); fflush(stdin);
         printf("Digite o valor do menor expoente(l): ");
-        scanf("%d", &l);
+        scanf("%d", &l); fflush(stdin);
         printf("Digite o valor do maior expoente(u): ");
-        scanf("%d", &u);
+        scanf("%d", &u); fflush(stdin);
 
         if(m < 0 || u<=l){
             printf("Valores inválidos, tente novamente\n");
@@ -109,13 +86,21 @@ int main() {
             char parteDecimal[128];
 
             
+           
+
+
+            system("cls");
             printf("Digite 'v' para voltar ao menu principal ou 's' para sair do programa\n");
-            printf("\n\t\t\tF(β,m,l,u)=F(10,%d,%d,%d)\n\n", m, l, u);
+            printf("\n\t\t\tF(β,m,l,u)=F(2,%d,%d,%d)\n\n", m, l, u);
             // usuario escreve 'v' para voltar ao menu principal e 's' para sair do programa
+
 
             printf("Informe o número a ser convertido: ");
             
             scanf("%s", num); fflush(stdin);
+
+
+            // strcat(num, "0");
 
             // Verificar se é uma string recebida é um número
             int i = 0;
@@ -124,12 +109,12 @@ int main() {
                 sinal = '1';
                 //Tirar o sinal negativo
                 strcpy(num, &num[1]);
+
             }else if(num[0] == 'v'){
-                controle = 0;
+                goto menuPrincipal;
                 system("cls");
             }else if(tolower(num[0]) == 's'){
-                controle = 0;
-                programaEstaRodando = 0;
+                return 0;
                 system("cls");
             }
 
@@ -150,15 +135,18 @@ int main() {
                 i++;
             }
 
-            converterNumeroParaBinario(num, parteInteira, parteDecimal);
-            printf("Número em binário: %c %s.%s\n", sinal, parteInteira, parteDecimal);
+            
 
-            int expoente = calcularExpoente(parteInteira, parteDecimal);
-            if(expoente < l){
-                printf("Underflow\n");
-            }else if(expoente > u){
-                printf("Overflow\n");
+            converterNumeroParaBinario(num, parteInteira, parteDecimal);
+            printf("Número em binário: %c %s.%s", sinal, parteInteira, parteDecimal);
+            if(strlen(parteDecimal) == 100){
+                printf("...");
             }
+            printf("\n");
+
+            
+            int expoente = calcularExpoente(parteInteira, parteDecimal);
+           
 
             char mantissa[128];
 
@@ -170,27 +158,50 @@ int main() {
             printf("0.%s ", mantissa);
             printf("x 2^%d\n", expoente);
 
+            
+
             // Implementar a representação negativa se necessário
             if(sinal == '1'){
-                char sinalAmplitude[128];
                 char complemento1[128];
                 char complemento2[128];
                 aplicarRepresentacoesNegativas(mantissa, m, complemento1, complemento2);
+                printf("\n");
             }
 
+
             // Converter o número para decimal
-            char numeroDecimal[128];
-            converterBinarioParaNumero(mantissa, numeroDecimal);
+            char num2[128];
+            num2[0] = '\0';
+
+
+
+            converterBinarioParaNumero(mantissa, expoente, num2);
+
+            if(expoente < l){
+                printf("\tERRO: Underflow, número muito pequeno\n");
+            }else if(expoente > u){
+                printf("\tERRO: Overflow, número muito grande\n");
+            }else if(strcmp(num, num2) != 0){
+                printf("\n\tERRO: Aproximação, número não foi convertido corretamente\n");
+                printf("Número convertido de volta para decimal: %c%s\n", sinal == '0' ? ' ':'-', num2);
+            }else{
+                 printf("Número convertido de volta para decimal: %c%s\n", sinal == '0' ? ' ':'-', num2);
+            }
+
+
+           
+
             
 
             system("pause");
             system("cls");
 
+            // goto teste;
+
 
         }
     }
 
-    fimTeste:
     return 0;
 }
 
@@ -203,11 +214,14 @@ void inteiroParaBinario(unsigned long long int n, char *binario) {
         return;
     }
 
-    unsigned long long int num = n;
+
+
     int i = 0;
-    while (num > 0) {
-        binario[i] = (num % 2) + '0';
-        num /= 2;
+
+    
+    while (n > 0) {
+        binario[i] = (n % 2) + '0';
+        n /= 2;
         i++;
     }
     binario[i] = '\0';
@@ -232,7 +246,7 @@ void decimalParaBinario(char *parteDecimal, char *numeroBinario, int precisao) {
 
     int casasDecimais = strlen(parteDecimal);
     char *endptr;
-    long double numeroDecimal = strtold(parteDecimal, &endptr); // Converter a string para um número decimal
+    long double numeroDecimal = strtold(parteDecimal, &endptr ); // Converter a string para um número decimal
 
 
     if(numeroDecimal == 0){ // Se o número for 0, retorna 0
@@ -265,15 +279,21 @@ void converterNumeroParaBinario(char *num, char *parteInteira, char *parteDecima
 
 
     //converter a parte inteira e Decimal
-    int inteiro = atoi(num);
+    unsigned long long int inteiro = strtoull(num, NULL, 10);
     char decimal[128];
+    int pontoEncontrado = 0;
 
     for(int i = 0; num[i] != '\0'; i++){
         if(num[i] == '.'){
             
             strcpy(parteDecimal, num+i+1);
+            pontoEncontrado = 1;
             break;
         }
+    }
+
+    if(pontoEncontrado == 0){
+        strcpy(parteDecimal, "0");
     }
 
     inteiroParaBinario(inteiro, parteInteira);
@@ -288,8 +308,15 @@ int calcularExpoente(char *parteInteira, char *parteDecimal) {
     int i = 0;
     int expoente = 0;
 
+
     if(parteInteira[0] == '0'){
-        while(parteDecimal[i] != '1'){
+        while(parteDecimal[i] != '1' && parteDecimal[i] != '\0'){
+            if(i == 0){
+                if(parteDecimal[i] == '0' && parteDecimal[i+1] == '\0'){
+                    expoente = 0;
+                    break;
+                }
+            }
             i++;
             expoente--;
         }
@@ -303,12 +330,15 @@ int calcularExpoente(char *parteInteira, char *parteDecimal) {
 void normalizarNumero(char *parteInteira, char *parteDecimal, char *mantissa, int m) {
     int expoente = calcularExpoente(parteInteira, parteDecimal);
 
+
     mantissa[0] = '\0';
     // Implementação da normalização do número
     if(expoente < 0){
         expoente = expoente * -1;
         strcat(mantissa, &parteDecimal[expoente]);
         
+    }else if(expoente == 0){
+        strcat(mantissa, parteDecimal);
     }else{
         strcat(mantissa, parteInteira);
         strcat(mantissa, parteDecimal);
@@ -323,8 +353,8 @@ void normalizarNumero(char *parteInteira, char *parteDecimal, char *mantissa, in
 // Função para aplicar representações negativas
 void aplicarRepresentacoesNegativas(char *mantissa, int m, char *complemento1, char *complemento2) {
     // Implementação da representação negativa
-    printf("Representação negativa\n");
-    printf("Sinal de amplitude: 1 0.%s\n", mantissa);
+    printf("\n\tRepresentação negativa\n");
+    printf("Sinal de amplitude: 1 .%s\n", mantissa);
 
     m = strlen(mantissa);
 
@@ -337,7 +367,9 @@ void aplicarRepresentacoesNegativas(char *mantissa, int m, char *complemento1, c
             complemento1[i] = '0';
         }
     }
-    printf("Complemento de 1:   1 1.%s\n", complemento1);
+    printf("Complemento de 1:   1 .%s\n", complemento1);
+
+    complemento2[0] = '\0';
 
     // Complemento de 2
     strcat(complemento2, "11");
@@ -362,20 +394,45 @@ void aplicarRepresentacoesNegativas(char *mantissa, int m, char *complemento1, c
         if(i == 0){
             printf("Complemento de 2:   %c ", complemento2[i]);
         }else if(i == 1){
-            printf("%c.", complemento2[i]);
+            printf(".");
         }else{
             printf("%c", complemento2[i]);
         }
 
     }
 
-    printf("\n");
 
 }
 
 
+
 // Função para converter binário para decimal
-void converterBinarioParaNumero(char *binario, char *numero) {
+void converterBinarioParaNumero(char *mantissa, int expoente, char *numero) {
+    char parteInteira[128];
+    char parteDecimal[128];
+    parteInteira[0] = '\0';
+    parteDecimal[0] = '\0';
+
+
+
+    tirarBitNormalizacao(mantissa, expoente, parteInteira, parteDecimal);
+
+
+
+
+    char inteiro[128];
+    binarioParaInteiro(parteInteira, inteiro);
+
+    char decimal[128];
+
+    binarioParaDecimal(parteDecimal, decimal, 100);
+
+    strcpy(numero, inteiro);
+    if(strlen(decimal) > 0){
+        strcat(numero, ".\0");
+        strcat(numero, decimal);
+    }
+    
     
 }
 
@@ -392,9 +449,9 @@ void binarioParaInteiro(char *parteInteira, char *inteiro) {
         }
     }
 
+    
     // Converte o número inteiro para string na ordem correta
-    sprintf(inteiro, "%llu", num);
-
+    snprintf(inteiro, 128, "%llu", num);
 }
 
 void binarioParaDecimal(char *parteBinaria, char *numero, int precisao) {
@@ -416,7 +473,8 @@ void binarioParaDecimal(char *parteBinaria, char *numero, int precisao) {
     snprintf(numeroDecimal, precisao + 2, "%.*Lf", precisao, valorDecimal);
 
     // copiar numero Decimal a parter da virgula em numero
-    strcat(numero, numeroDecimal+1);
+    numero[0] = '\0';
+    strcat(numero, numeroDecimal+2);
 
     // remover o 0 a direita
     int i = strlen(numero) - 1;
@@ -428,8 +486,8 @@ void binarioParaDecimal(char *parteBinaria, char *numero, int precisao) {
 
 void tirarBitNormalizacao(char *mantissa, int expoente, char *parteInteira, char *parteDecimal){
     strcpy(parteInteira, "\0");
-    strcpy(parteDecimal, "\0");
-
+    
+   strcpy(parteDecimal, " ");
     int i;
 
     if(expoente < 0){
@@ -438,13 +496,17 @@ void tirarBitNormalizacao(char *mantissa, int expoente, char *parteInteira, char
         for(i = 0; i < expoente; i++){
             parteDecimal[i] = '0';
         }
-        strcat(parteDecimal, mantissa);
+        for(i = 0; i < (int)strlen(mantissa); i++){
+            parteDecimal[expoente + i] = mantissa[i];
+        }
+        parteDecimal[expoente + i] = '\0';
     }else{
         for(i = 0; i < expoente; i++){
             parteInteira[i] = mantissa[i];
         }
         parteInteira[i] = '\0';
         strcpy(parteDecimal, &mantissa[i]);
+
     }
 }
         
