@@ -2,6 +2,27 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "type": "java",
+      "name": "DoubleInput",
+      "request": "launch",
+      "mainClass": "DoubleInput",
+      "projectName": "Part01_13.DoubleInput"
+    },
+    {
+      "type": "java",
+      "name": "AdaLovelace",
+      "request": "launch",
+      "mainClass": "AdaLovelace",
+      "projectName": "Part01_02.AdaLovelace"
+    },
+    {
+      "type": "java",
+      "name": "Sandbox",
+      "request": "launch",
+      "mainClass": "Sandbox",
+      "projectName": "Part01_01.Sandbox"
+    },
+    {
       "name": "(Windows) Launch",
       "type": "cppvsdbg",
       "request": "launch",

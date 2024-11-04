@@ -1,5 +1,6 @@
 {
   "files.associations": {
+    "*.ejs": "html",
     "*.tcc": "cpp",
     "cctype": "cpp",
     "clocale": "cpp",
@@ -19,7 +20,8 @@
     "ostream": "cpp",
     "streambuf": "cpp",
     "type_traits": "cpp",
-    "typeinfo": "cpp"
+    "typeinfo": "cpp",
+    "stdlib.h": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",
