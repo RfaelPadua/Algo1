@@ -6,11 +6,11 @@
 
 void mergeSort(int* vetor, int inicio, int fim);
 void merge(int* vetor, int inicio, int meio, int fim);
-void merge(int* vetor, int inicio, int meio, int fim);
+
 
 int main(){
     int vetor[15] = {34, 7, 23, 32, 5, 62, 32, 14, 25, 12, 22, 11, 9, 3, 17};
-    int tamanho = 15;
+    int tamanho = sizeof(vetor)/sizeof(vetor[0]);
 
     
 
@@ -18,7 +18,7 @@ int main(){
     for(int i = 0; i < tamanho; i++){
         printf("%d ", vetor[i]);
     }
-
+    printf("\n");
     mergeSort(vetor, 0, tamanho - 1);
 
     printf("\nVetor ordenado:\n");
@@ -35,6 +35,11 @@ void mergeSort(int *vetor, int inicio, int fim){
         mergeSort(vetor, inicio, meio);
         mergeSort(vetor, meio+1, fim);
         merge(vetor, inicio, meio, fim);
+        
+        for(int i = 0; i < 15; i++){
+            printf("%d ", vetor[i]);
+        }
+        printf("\n");
     }
 }
 
@@ -58,11 +63,16 @@ void merge(int* vetor, int inicio, int meio, int fim){
             
             if (p1 > meio) fim1 = 1;
             if (p2 > fim ) fim2 = 1;
+        }else{
+            if(!fim1){
+                temp[i] = vetor[p1++];
+            }else{
+                temp[i] = vetor[p2++];
+            }
         }
     }
 
-    for(i = 0, j = inicio; j < tamanho - 1; i++, j++){
+    for(i = 0, j = inicio; i < tamanho; i++, j++){
         vetor[j] = temp[i];
     }
-
 }
