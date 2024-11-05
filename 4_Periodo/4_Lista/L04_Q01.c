@@ -72,7 +72,7 @@ void merge(int* vetor, int inicio, int meio, int fim){
         }
     }
 
-    for(i = 0, j = inicio; i < tamanho; i++, j++){
+    for(i = 0, j = inicio; j <= tamanho - 1; i++, j++){
         vetor[j] = temp[i];
     }
 }
