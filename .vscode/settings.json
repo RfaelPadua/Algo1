@@ -21,7 +21,8 @@
     "streambuf": "cpp",
     "type_traits": "cpp",
     "typeinfo": "cpp",
-    "stdlib.h": "c"
+    "stdlib.h": "c",
+    "time.h": "c"
   },
   "C_Cpp_Runner.msvcBatchPath": "",
   "C_Cpp_Runner.cCompilerPath": "gcc",
