@@ -146,7 +146,7 @@ void separarMenoresMaiores(int* vetor, int inicio, int fim) {
         estaSeparado = 1; // Supor que a partição está separada
 
 
-        int meio = (inicio + fim) / 2; // Indice do meio do vetor
+        int meio = (inicio + fim) / 2; // Indice do meio do vetorD
         // int tam = (fim - inicio + 1) * 0.1 < 3 ? 3 : (fim - inicio + 1) * 0.1; // Tamanho do bloco de 10% do vetor
         int tam = (fim - inicio + 1) * 0.1 < 3 ? 3 : (fim - inicio + 1) * 0.1 > 100000 ? 100000 : (fim - inicio + 1) * 0.1; // Tamanho do bloco de 10% do vetor
         int maxIndex[tam]; // Índice do maior elemento
