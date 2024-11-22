@@ -2,18 +2,19 @@
 #include<stdlib.h>
 #include<time.h>
 #include<string.h>
-#include "vetor_1000.c"   // Inclui o vetor de tamanho 1000
-#include "vetor_5000.c"   // Inclui o vetor de tamanho 5000
-#include "vetor_10000.c"  // Inclui o vetor de tamanho 10000
-#include "vetor_50000.c"  // Inclui o vetor de tamanho 50000
-#include "vetor_100000.c" // Inclui o vetor de tamanho 100000
-#include "vetor_500000.c" // Inclui o vetor de tamanho 500000
-#include "vetor_1000000.c"// Inclui o vetor de tamanho 1000000
-#include <sys/resource.h>
-<<<<<<< HEAD
-=======
 
->>>>>>> d3f6c69c4b9c8cf68eab3ac86f09ebcc2db5a7a8
+
+
+
+
+#ifdef _WIN32
+
+#include <windows.h>
+#include <time.h>
+
+
+
+
 // Declaração das funções de ordenação
 void heapSort(int *vetor, int n, int tam); 
 void criaHeap(int *vetor, int i, int f);
@@ -28,17 +29,25 @@ void bubbleSort(int *vetor, int tam);
 void testarOrdenacao(int *vetor, int tam);
 void test(void (*sort)(int*, int, int),int fim);
 
-int* gerarVetor(int tam) {
-    int i;
+void medirDesempenho(void (*sort)(int*, int, int), int *vetor, int tam, long double *temp) {
+    int *copiaVetor = (int*) malloc(tam * sizeof(int));
+    memcpy(copiaVetor, vetor, tam * sizeof(int));
 
-    int *vetor = (int*) malloc(tam * sizeof(int));
-    for(i = 0; i < tam; i++) {
-        vetor[i] = rand() % 1000000;
-    }
+    clock_t inicio = clock();
+    sort(copiaVetor, 0, tam);
+    clock_t fim = clock();
 
-    return vetor;
+    // Verifica se o vetor foi ordenado corretamente
+    testarOrdenacao(copiaVetor, tam);
+
+    // Calcula o tempo total em segundos
+    *temp = (long double)(fim - inicio) / CLOCKS_PER_SEC;
 }
-// Função para medir desempenho de um algoritmo de ordenação
+
+#else
+
+#include <sys/resource.h>
+
 void medirDesempenho(void (*sort)(int*, int, int), int *vetor, int tam, long double *temp) {
     int *copiaVetor = (int*) malloc(tam * sizeof(int));
     memcpy(copiaVetor, vetor, tam * sizeof(int));
@@ -70,12 +79,28 @@ void medirDesempenho(void (*sort)(int*, int, int), int *vetor, int tam, long dou
     *temp = total_usec / 1000000.0;
 }
 
+
+#endif
+
+int* gerarVetor(int tam) {
+    int i;
+
+    int *vetor = (int*) malloc(tam * sizeof(int));
+    for(i = 0; i < tam; i++) {
+        vetor[i] = rand() % 1000000;
+    }
+
+    return vetor;
+}
+// Função para medir desempenho de um algoritmo de ordenação
+
+
 int main() {
     int tamanhos[] = {1000, 5000, 10000, 50000, 100000, 500000, 1000000}; // Diferentes tamanhos de vetores
     int numTestes = 5; // Número de testes a serem feitos para cada tamanho
     long double tempHeap[5], tempAluno[5]; // Para armazenar os tempos de cada execução
 
-    // Loop sobre os tamanhos dos vetores
+    //Loop sobre os tamanhos dos vetores
     for (int i = 0; i < 7; i++) { // 7 tamanhos diferentes
         int tam = tamanhos[i];
         printf("N = %d\n", tam);
@@ -119,38 +144,8 @@ int main() {
             free(vetores[j]);
         }
     }
-
-    // Testar a função de ordenação em certos cenários
-
-    // Testar a ordenação de um vetor de tamanho 1000000 ja ordenado
-
-    int vetor[1000000];
-    for(int i = 0; i < 1000000; i++) {
-        vetor[i] = i;
-    }
-
-    printf("Testando a ordenação de um vetor de tamanho 1000000 já ordenado\n");
-    medirDesempenho(alunoSort, vetor, 1000000, &tempAluno[0]);
-
-    printf("AlunoSort: %.6Lf\n", tempAluno[0]);
-
-    printf("Testando a ordenação de um vetor de tamanho 1000000 já ordenado em ordem decrescente\n");
-    for(int i = 0; i < 1000000; i++) {
-        vetor[i] = 1000000 - i;
-    }
-
-    medirDesempenho(alunoSort, vetor, 1000000, &tempAluno[0]);
-
-    printf("AlunoSort: %.6Lf\n", tempAluno[0]);
-
-
-
-
     return 0;
 }
-
-    
-
 
 void criaHeap(int *vetor, int i, int f){
     int aux = vetor[i];
@@ -178,8 +173,6 @@ void criaHeap(int *vetor, int i, int f){
 
 void heapSort(int *vetor, int n, int tam){
     int i;
-
-    
 
     for(i = (tam-1)/2; i >= 0; i--){
         criaHeap(vetor, i, tam - 1);
@@ -255,45 +248,6 @@ void alunoSort(int* vetor, int inicio, int fim) {
 
 }
 
-// void separarMenoresMaiores(int* vetor, int inicio, int fim) {
-//     int estaSeparado = 0; // Flag para indicar se a partição está separada
-
-//     while (!estaSeparado) { // Enquanto a partição não estiver separada 
-        
-//         estaSeparado = 1; // Supor que a partição está separada
-
-//         // Encontrar o maior na primeira metade
-
-//         int maxIndex = inicio; // Índice do maior elemento
-//         int meio = (inicio + fim) / 2; // Indice do meio do vetor
-
-//         for (int i = inicio; i < meio; i++) { // Percorrer a primeira metade e encontrar o maior
-//             if (vetor[i] > vetor[maxIndex]) {
-//                 maxIndex = i;
-//             }
-//         }
-
-//         // Encontrar o menor na segunda metade
-
-
-//         int minIndex = meio; // Índice do menor elemento
-
-//         for (int j = meio; j < fim; j++) { // Percorrer a segunda metade e encontrar o menor
-
-//             if (vetor[j] < vetor[minIndex]) {
-//                 minIndex = j;
-//             }
-//         }
-
-//         // Verificar se o maior da primeira metade é menor que o menor da segunda metade, se sim, trocar
-//         if (vetor[maxIndex] > vetor[minIndex]) {
-//             int aux = vetor[maxIndex];
-//             vetor[maxIndex] = vetor[minIndex];
-//             vetor[minIndex] = aux;
-//             estaSeparado = 0; // Se houve troca, a partição não está separada, então resetar a flag
-//         }
-//     }
-// }
 
 
 
@@ -306,98 +260,5 @@ void testarOrdenacao(int *vetor, int tam){
             printf(" %d não é menor que %d\n", vetor[i], vetor[i+1]);
 
         }
-    }
-}
-
-void bubbleSort(int *vetor, int tam){
-    int i, j, aux;
-    for(i = 0; i < tam; i++){
-        for(j = 0; j < tam - 1; j++){
-            if(vetor[j] > vetor[j+1]){
-                aux = vetor[j];
-                vetor[j] = vetor[j+1];
-                vetor[j+1] = aux;
-            }
-        }
-    }
-}
-
-void test(void (*sort)(int*, int, int), int fim) {
-    if (fim < 1000) return;
-
-    clock_t start, end;
-    double time;
-
-    printf("\nTestando vetor de tamanho 1000\n");
-    start = clock();
-    sort(vetor_1000, 0, 1000);
-    end = clock();
-    time = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Tempo de execucao: %f\n", time);
-    testarOrdenacao(vetor_1000, 1000);
-
-    if (fim == 1000) return;
-
-    printf("\nTestando vetor de tamanho 5000\n");
-    start = clock();
-    sort(vetor_5000, 0, 5000);
-    end = clock();
-    time = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Tempo de execucao: %f\n", time);
-    testarOrdenacao(vetor_5000, 5000);
-
-    if (fim == 5000) return;
-
-    printf("\nTestando vetor de tamanho 10000\n");
-    start = clock();
-    sort(vetor_10000, 0, 10000);
-    end = clock();
-    time = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Tempo de execucao: %f\n", time);
-    testarOrdenacao(vetor_10000, 10000);
-
-    if (fim == 10000) return;
-
-    printf("\nTestando vetor de tamanho 50000\n");
-    start = clock();
-    sort(vetor_50000, 0, 50000);
-    end = clock();
-    time = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Tempo de execucao: %f\n", time);
-    testarOrdenacao(vetor_50000, 50000);
-
-    if (fim == 50000) return;
-
-    printf("\nTestando vetor de tamanho 100000\n");
-    start = clock();
-    sort(vetor_100000, 0, 100000);
-    end = clock();
-    time = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Tempo de execucao: %f\n", time);
-    testarOrdenacao(vetor_100000, 100000);
-
-    if (fim == 100000) return;
-
-    printf("\nTestando vetor de tamanho 500000\n");
-    start = clock();
-    sort(vetor_500000, 0, 500000);
-    end = clock();
-    time = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Tempo de execucao: %f\n", time);
-    testarOrdenacao(vetor_500000, 500000);
-
-    if (fim == 500000) return;
-
-    printf("\nTestando vetor de tamanho 1000000\n");
-    start = clock();
-    sort(vetor_1000000, 0, 1000000);
-    end = clock();
-    time = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Tempo de execucao: %f\n", time);
-    testarOrdenacao(vetor_1000000, 1000000);
-
-    for(int i = 0; i < 1000000; i++){
-        if(i % 50 == 0) printf("\n");
-        printf("%d ", vetor_1000000[i]);
     }
 }
