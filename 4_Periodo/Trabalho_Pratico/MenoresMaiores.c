@@ -9,9 +9,10 @@
 #include "vetor_100000.c" // Inclui o vetor de tamanho 100000
 #include "vetor_500000.c" // Inclui o vetor de tamanho 500000
 #include "vetor_1000000.c"// Inclui o vetor de tamanho 1000000
+#include <sys/resource.h>
 
 // Declaração das funções de ordenação
-void heapSort(int *vetor, int tam); 
+void heapSort(int *vetor, int n, int tam); 
 void criaHeap(int *vetor, int i, int f);
 
 void alunoSort(int *vetor, int inicio, int fim);
@@ -24,94 +25,141 @@ void bubbleSort(int *vetor, int tam);
 void testarOrdenacao(int *vetor, int tam);
 void test(void (*sort)(int*, int, int),int fim);
 
-int* gerarVetor(int tam){
+int* gerarVetor(int tam) {
     int i;
 
     int *vetor = (int*) malloc(tam * sizeof(int));
-
-    for(i = 0; i < tam; i++){
+    for(i = 0; i < tam; i++) {
         vetor[i] = rand() % 1000000;
     }
 
     return vetor;
 }
+// Função para medir desempenho de um algoritmo de ordenação
+void medirDesempenho(void (*sort)(int*, int, int), int *vetor, int tam, long double *temp) {
+    int *copiaVetor = (int*) malloc(tam * sizeof(int));
+    memcpy(copiaVetor, vetor, tam * sizeof(int));
 
+    struct rusage inicio, fim;
+    getrusage(RUSAGE_SELF, &inicio);
+    
+    sort(copiaVetor, 0, tam);
+    
+    getrusage(RUSAGE_SELF, &fim);
 
-int main(){
+    // Verifica se o vetor foi ordenado corretamente
+    testarOrdenacao(copiaVetor, tam);
+    
+    // Calcula o tempo no modo usuário em microsegundos
+    long sec_user = fim.ru_utime.tv_sec - inicio.ru_utime.tv_sec;
+    long usec_user = fim.ru_utime.tv_usec - inicio.ru_utime.tv_usec;
+    long total_user_usec = sec_user * 1000000 + usec_user;
 
+    // Calcula o tempo no modo sistema em microsegundos
+    long sec_sys = fim.ru_stime.tv_sec - inicio.ru_stime.tv_sec;
+    long usec_sys = fim.ru_stime.tv_usec - inicio.ru_stime.tv_usec;
+    long total_sys_usec = sec_sys * 1000000 + usec_sys;
 
-    int vetor[20] = {34, 36, 23, 32, 5, 62, 32, 102, 25, 12, 22, 11, 9, 3, 17, 1, 8, 4, 6, 2};
-    int tam = sizeof(vetor) / sizeof(vetor[0]);
+    // Soma os tempos (modo usuário + modo sistema)
+    long total_usec = total_user_usec + total_sys_usec;
 
-    printf("Testando alunoSort\n");
-    for(int i = 0; i < tam; i++){
-        printf("%d ", vetor[i]);
-    }
-    printf("\n");
+    // Armazena o tempo total na variável temp (em segundos com precisão de microsegundos)
+    *temp = total_usec / 1000000.0;
+}
 
-    alunoSort(vetor, 0, tam);
+int main() {
+    int tamanhos[] = {1000, 5000, 10000, 50000, 100000, 500000, 1000000}; // Diferentes tamanhos de vetores
+    int numTestes = 5; // Número de testes a serem feitos para cada tamanho
+    long double tempHeap[5], tempAluno[5]; // Para armazenar os tempos de cada execução
 
-    for(int i = 0; i < tam; i++){
-        printf("%d ", vetor[i]);
-    }
-
-    printf("\n");
-
-    for(int i = 10; i <= 1000000000; i *= 10){
-        int *vetor1 = gerarVetor(i);
-        //criar copia do vetor 1
-        int *vetor2 = (int*) malloc(i * sizeof(int));
-        int *vetor3 = (int*) malloc(i * sizeof(int));
-
-        for(int j = 0; j < i; j++){
-            vetor2[j] = vetor1[j];
-            vetor3[j] = vetor1[j];
+    // Loop sobre os tamanhos dos vetores
+    for (int i = 0; i < 7; i++) { // 7 tamanhos diferentes
+        int tam = tamanhos[i];
+        printf("N = %d\n", tam);
+        
+        // Gerar 5 vetores diferentes para o tamanho atual
+        int* vetores[5];
+        for (int j = 0; j < numTestes; j++) {
+            vetores[j] = gerarVetor(tam);
         }
 
-        clock_t start, end;
-        double time;
+        // Testar HeapSort
+        printf("heapSort\n");
+        for (int j = 0; j < numTestes; j++) {
+            medirDesempenho(heapSort, vetores[j], tam, &tempHeap[j]);
+            printf("%.6Lf\n", tempHeap[j]);
+        }
+        // Calcular o tempo médio para o HeapSort
+        long double mediaHeap = 0;
+        for (int j = 0; j < numTestes; j++) {
+            mediaHeap += tempHeap[j];
+        }
+        mediaHeap /= numTestes;
+        printf("%.6Lf\n", mediaHeap);
 
-        printf("\t\tTestando vetor de tamanho %d\n\n", i);
+        // Testar AlunoSort
+        printf("AlunoSort\n");
+        for (int j = 0; j < numTestes; j++) {
+            medirDesempenho(alunoSort, vetores[j], tam, &tempAluno[j]);
+            printf("%.6Lf\n", tempAluno[j]);
+        }
+        // Calcular o tempo médio para o AlunoSort
+        long double mediaAluno = 0;
+        for (int j = 0; j < numTestes; j++) {
+            mediaAluno += tempAluno[j];
+        }
+        mediaAluno /= numTestes;
+        printf("%.6Lf\n", mediaAluno);
 
-        printf("Testando heapSort\n");
-        start = clock();
-        heapSort(vetor1, i);
-        end = clock();
-        time = (double)(end - start) / CLOCKS_PER_SEC;
-        printf("Tempo de execucao do heapSort para %d elementos: %f\n", i, time);
-
-        printf("Testando alunoSort\n");
-        start = clock();
-        alunoSort(vetor2, 0, i);
-        end = clock();
-        time = (double)(end - start) / CLOCKS_PER_SEC;
-        printf("Tempo de execucao do alunoSort para %d elementos: %f\n", i, time);
-        testarOrdenacao(vetor2, i);
-
-        // printf("Testando bubbleSort\n");
-        // start = clock();
-        // bubbleSort(vetor3, i);
-        // end = clock();
-        // time = (double)(end - start) / CLOCKS_PER_SEC;
-        // printf("Tempo de execucao do bubbleSort para %d elementos: %f\n", i, time);
-        
-        
-        free(vetor1);
-        free(vetor2);
+        // Liberar os vetores alocados dinamicamente
+        for (int j = 0; j < numTestes; j++) {
+            free(vetores[j]);
+        }
     }
 
-    // test(alunoSort, 1000000);
-    
+    // Testar a função de ordenação em certos cenários
+
+    // Testar a ordenação de um vetor de tamanho 1000000 ja ordenado
+
+    int vetor[1000000];
+    for(int i = 0; i < 1000000; i++) {
+        vetor[i] = i;
+    }
+
+    printf("Testando a ordenação de um vetor de tamanho 1000000 já ordenado\n");
+    medirDesempenho(alunoSort, vetor, 1000000, &tempAluno[0]);
+
+    printf("AlunoSort: %.6Lf\n", tempAluno[0]);
+
+    printf("Testando a ordenação de um vetor de tamanho 1000000 já ordenado em ordem decrescente\n");
+    for(int i = 0; i < 1000000; i++) {
+        vetor[i] = 1000000 - i;
+    }
+
+    medirDesempenho(alunoSort, vetor, 1000000, &tempAluno[0]);
+
+    printf("AlunoSort: %.6Lf\n", tempAluno[0]);
+
+
+
+
+    return 0;
 }
+
+    
+
 
 void criaHeap(int *vetor, int i, int f){
     int aux = vetor[i];
     int j = i * 2 + 1;
 
+
     while(j <= f){
+
         if(j < f && vetor[j] < vetor[j+1]){
             j = j + 1;
         }
+
         if(aux < vetor[j]){
             vetor[i] = vetor[j];
             i = j;
@@ -121,10 +169,14 @@ void criaHeap(int *vetor, int i, int f){
         }
     }
     vetor[i] = aux;
+
+
 }
 
-void heapSort(int *vetor, int tam){
+void heapSort(int *vetor, int n, int tam){
     int i;
+
+    
 
     for(i = (tam-1)/2; i >= 0; i--){
         criaHeap(vetor, i, tam - 1);
@@ -139,46 +191,38 @@ void heapSort(int *vetor, int tam){
 }
 
 void separarMenoresMaiores(int* vetor, int inicio, int fim) {
-    int estaSeparado = 0; // Flag para indicar se a partição está separada
+    int estaSeparado = 0;
 
+    while(!estaSeparado){
+        estaSeparado = 1;
 
-    while(!estaSeparado){ // Enquanto a partição não estiver separada 
-        estaSeparado = 1; // Supor que a partição está separada
+        int meio = (inicio + fim) / 2;
+        int tam = (fim - inicio + 1) * 0.1 < 3 ? 3 : (fim - inicio + 1) * 0.1;
+        int maxIndex[tam];
+        for(int i = 0; i < tam; i++) maxIndex[i] = -1;
 
-
-        int meio = (inicio + fim) / 2; // Indice do meio do vetor
-        // int tam = (fim - inicio + 1) * 0.1 < 3 ? 3 : (fim - inicio + 1) * 0.1; // Tamanho do bloco de 10% do vetor
-        int tam = (fim - inicio + 1) * 0.1 < 3 ? 3 : (fim - inicio + 1) * 0.1 > 100000 ? 100000 : (fim - inicio + 1) * 0.1; // Tamanho do bloco de 10% do vetor
-        int maxIndex[tam]; // Índice do maior elemento
-        for(int i = 0; i < tam; i++) maxIndex[i] = -1; // Inicializar o índice do maior elemento
-
-        maxIndex[0] = inicio; // Inicializar o índice do maior elemento
+        maxIndex[0] = inicio;
         int i, comecoMax = 0;
 
-
-        for (i = inicio + 1; i < meio; i++) { // Percorrer a primeira metade e encontrar o maior
+        for (i = inicio + 1; i < meio; i++) {
             if (vetor[i] > vetor[maxIndex[comecoMax]]) {
-                comecoMax = (comecoMax + 1) % tam; // Incrementar o índice do maior
+                comecoMax = (comecoMax + 1) % tam;
                 maxIndex[comecoMax] = i;
-                
-
             }
         }
 
-        int minIndex[tam]; // Índice do menor elemento
-        for(int i = 0; i < tam; i++) minIndex[i] = -1; // Inicializar o índice do menor elemento
+        int minIndex[tam];
+        for(int i = 0; i < tam; i++) minIndex[i] = -1;
 
-        minIndex[0] = meio; // Inicializar o índice do menor elemento
+        minIndex[0] = meio;
         int comecoMin = 0;
 
-        for (i = meio + 1; i < fim; i++) { // Percorrer a segunda metade
+        for (i = meio + 1; i < fim; i++) {
             if (vetor[i] < vetor[minIndex[comecoMin]]) {
-                comecoMin = (comecoMin + 1) % tam; // Incrementar o índice do menor
+                comecoMin = (comecoMin + 1) % tam;
                 minIndex[comecoMin] = i;
-                
             }
         }
-
 
         for (i = 0; i < tam; i++) {
             if(minIndex[comecoMin] == -1 || maxIndex[comecoMax] == -1) break;
@@ -187,16 +231,26 @@ void separarMenoresMaiores(int* vetor, int inicio, int fim) {
                 vetor[maxIndex[comecoMax]] = vetor[minIndex[comecoMin]];
                 vetor[minIndex[comecoMin]] = aux;
 
-                comecoMax = (comecoMax - 1 + tam) % tam; // Decrementar o índice do maior
-                comecoMin = (comecoMin - 1 + tam) % tam; // Decrementar o índice do menor
+                comecoMax = (comecoMax - 1 + tam) % tam;
+                comecoMin = (comecoMin - 1 + tam) % tam;
 
-                
-                estaSeparado = 0; // Se houve troca, a partição não está separada, então resetar a flag
+                estaSeparado = 0;
             }
         }
     }
 }
 
+void alunoSort(int* vetor, int inicio, int fim) {
+
+    if (fim - inicio <= 1) return; // Se to tamanho <= 1, já está ordenado
+
+    int meio = (inicio + fim) / 2; // Dividir o vetor em duas partes
+
+    separarMenoresMaiores(vetor, inicio, fim); // Separar o vetor em menores e maiores
+    alunoSort(vetor, inicio, meio); // Ordenar a primeira metade
+    alunoSort(vetor, meio, fim); // Ordenar a segunda metade
+
+}
 
 // void separarMenoresMaiores(int* vetor, int inicio, int fim) {
 //     int estaSeparado = 0; // Flag para indicar se a partição está separada
@@ -240,17 +294,6 @@ void separarMenoresMaiores(int* vetor, int inicio, int fim) {
 
 
 
-void alunoSort(int* vetor, int inicio, int fim) {
-
-    if (fim - inicio <= 1) return; // Se to tamanho <= 1, já está ordenado
-
-    int meio = (inicio + fim) / 2; // Dividir o vetor em duas partes
-
-    separarMenoresMaiores(vetor, inicio, fim); // Separar o vetor em menores e maiores
-    alunoSort(vetor, inicio, meio); // Ordenar a primeira metade
-    alunoSort(vetor, meio, fim); // Ordenar a segunda metade
-
-}
 
 void testarOrdenacao(int *vetor, int tam){
     int i;
