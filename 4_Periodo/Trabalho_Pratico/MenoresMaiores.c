@@ -9,7 +9,7 @@
 #include "vetor_100000.c" // Inclui o vetor de tamanho 100000
 #include "vetor_500000.c" // Inclui o vetor de tamanho 500000
 #include "vetor_1000000.c"// Inclui o vetor de tamanho 1000000
-
+#include <sys/resource.h>
 // Declaração das funções de ordenação
 void heapSort(int *vetor, int tam); 
 void criaHeap(int *vetor, int i, int f);
