@@ -7,11 +7,9 @@
 
 
 
-#ifdef _WIN32
 
 #include <windows.h>
 #include <time.h>
-
 
 
 
@@ -27,6 +25,8 @@ void separarMenoresMaiores(int* vetor, int inicio, int fim);
 // Declaracao das funcões para testar a ordenacao
 void testarOrdenacao(int *vetor, int tam);
 
+
+#ifdef _WIN32
 void medirDesempenho(void (*sort)(int*, int, int), int *vetor, int tam, long double *temp) {
     int *copiaVetor = (int*) malloc(tam * sizeof(int));
     memcpy(copiaVetor, vetor, tam * sizeof(int));
@@ -182,14 +182,14 @@ void heapSort(int *vetor, int n, int tam){
 void separarMenoresMaiores(int* vetor, int inicio, int fim) {
     int estaSeparado = 0; // Tag para verificar se o vetor está separado
 
-
-    
-   
-
     while(!estaSeparado){
         estaSeparado = 1; // Inicialmente, considera-se que o vetor está separado
         int i;
+
+        // Define o meio do vetor
         int meio = (inicio + fim) / 2;
+
+        // Vetor de índices dos maiores elementos, inicializado com -1;
         int tam = ((fim - inicio)/2) * 0.1; // Tamanho do vetor de índices dos maiores elementos
         tam = tam < 3 ? 3 : tam; 
         int *maxIndex = (int*) malloc(tam * sizeof(int));
@@ -200,14 +200,6 @@ void separarMenoresMaiores(int* vetor, int inicio, int fim) {
             minIndex[i] = -1;
         } 
 
-        // Definir o meio do vetor
-        
-
-        // Definir o tamanho do vetor de índices dos maiores elementos (10% do tamanho do vetor)
-        // Se o tamanho for menor que 3, tam = 3
-        
-
-        // Vetor de índices dos maiores elementos, inicializado com -1
         
         
 
