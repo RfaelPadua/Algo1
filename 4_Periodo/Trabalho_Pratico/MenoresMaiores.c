@@ -6,13 +6,6 @@
 
 
 
-
-
-#include <windows.h>
-#include <time.h>
-
-
-
 // Declaracao das funcões de ordenacao
 void heapSort(int *vetor, int n, int tam); 
 void criaHeap(int *vetor, int i, int f);
@@ -27,6 +20,8 @@ void testarOrdenacao(int *vetor, int tam);
 
 
 #ifdef _WIN32
+#include <windows.h>
+#include <time.h>
 void medirDesempenho(void (*sort)(int*, int, int), int *vetor, int tam, long double *temp) {
     int *copiaVetor = (int*) malloc(tam * sizeof(int));
     memcpy(copiaVetor, vetor, tam * sizeof(int));
@@ -235,38 +230,6 @@ void separarMenoresMaiores(int* vetor, int inicio, int fim) {
             }
         }
 
-        //         // Coloca o primeiro elemento como o maior
-        // maxIndex[0] = meio - 1;
-
-        // // Marca o índice do maior elemento atual
-        // int ultimoMax = 0; 
-
-        // // Percorre a primeira metade do vetor
-        // // Se encontrar um elemento maior que o maior atual, atualiza o vetor de índices e o índice do maior atual
-        // for (i = meio - 1; i >= inicio; i--) { 
-        //     if (vetor[i] > vetor[maxIndex[ultimoMax]]) { 
-        //         ultimoMax = (ultimoMax + 1) % tam; 
-        //         maxIndex[ultimoMax] = i;  
-        //     }
-        // }
-
-        // // Vetor de índices dos menores elementos, inicializado com -1;
-
-        // // Coloca o primeiro elemento como o menor
-        // minIndex[0] = fim - 1;
-
-        // // Marca o índice do menor elemento atual
-        // int ultimoMin = 0;
-
-        // // Percorre a segunda metade do vetor
-        // // Se encontrar um elemento menor que o menor atual, atualiza o vetor de índices e o índice do menor atual
-        // for(i = fim - 1; i >= meio; i--){
-        //     if(vetor[i] < vetor[minIndex[ultimoMin]]){
-        //         ultimoMin = (ultimoMin + 1) % tam;
-        //         minIndex[ultimoMin] = i;
-        //     }
-        // }
-
 
         // Troca os elementos se o maior da primeira metade for maior que o menor da segunda metade
         for (i = 0; i < tam; i++) {
@@ -279,12 +242,8 @@ void separarMenoresMaiores(int* vetor, int inicio, int fim) {
                 vetor[maxIndex[ultimoMax]] = vetor[minIndex[ultimoMin]];
                 vetor[minIndex[ultimoMin]] = aux;
 
-
-
                 ultimoMax = (ultimoMax - 1 + tam) % tam;
                 ultimoMin = (ultimoMin - 1 + tam) % tam;
-
-
 
                 estaSeparado = 0;
             }else{
