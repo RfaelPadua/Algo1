@@ -15,19 +15,17 @@
 
 
 
-// Declaração das funções de ordenação
+// Declaracao das funcões de ordenacao
 void heapSort(int *vetor, int n, int tam); 
 void criaHeap(int *vetor, int i, int f);
 
 void alunoSort(int *vetor, int inicio, int fim);
 void separarMenoresMaiores(int* vetor, int inicio, int fim);
 
-void bubbleSort(int *vetor, int tam);
 
 
-// Declaração das funções para testar a ordenação
+// Declaracao das funcões para testar a ordenacao
 void testarOrdenacao(int *vetor, int tam);
-void test(void (*sort)(int*, int, int),int fim);
 
 void medirDesempenho(void (*sort)(int*, int, int), int *vetor, int tam, long double *temp) {
     int *copiaVetor = (int*) malloc(tam * sizeof(int));
@@ -75,7 +73,7 @@ void medirDesempenho(void (*sort)(int*, int, int), int *vetor, int tam, long dou
     // Soma os tempos (modo usuário + modo sistema)
     long total_usec = total_user_usec + total_sys_usec;
 
-    // Armazena o tempo total na variável temp (em segundos com precisão de microsegundos)
+    // Armazena o tempo total na variável temp (em segundos com precisao de microsegundos)
     *temp = total_usec / 1000000.0;
 }
 
@@ -92,13 +90,13 @@ int* gerarVetor(int tam) {
 
     return vetor;
 }
-// Função para medir desempenho de um algoritmo de ordenação
+// Funcao para medir desempenho de um algoritmo de ordenacao
 
 
 int main() {
     int tamanhos[] = {1000, 5000, 10000, 50000, 100000, 500000, 1000000}; // Diferentes tamanhos de vetores
     int numTestes = 5; // Número de testes a serem feitos para cada tamanho
-    long double tempHeap[5], tempAluno[5]; // Para armazenar os tempos de cada execução
+    long double tempHeap[5], tempAluno[5]; // Para armazenar os tempos de cada execucao
 
     //Loop sobre os tamanhos dos vetores
     for (int i = 0; i < 7; i++) { // 7 tamanhos diferentes
@@ -117,7 +115,7 @@ int main() {
             medirDesempenho(heapSort, vetores[j], tam, &tempHeap[j]);
             printf("%.6Lf\n", tempHeap[j]);
         }
-        // Calcular o tempo médio para o HeapSort
+        // Calcular o tempo medio para o HeapSort
         long double mediaHeap = 0;
         for (int j = 0; j < numTestes; j++) {
             mediaHeap += tempHeap[j];
@@ -131,7 +129,7 @@ int main() {
             medirDesempenho(alunoSort, vetores[j], tam, &tempAluno[j]);
             printf("%.6Lf\n", tempAluno[j]);
         }
-        // Calcular o tempo médio para o AlunoSort
+        // Calcular o tempo medio para o AlunoSort
         long double mediaAluno = 0;
         for (int j = 0; j < numTestes; j++) {
             mediaAluno += tempAluno[j];
@@ -139,11 +137,16 @@ int main() {
         mediaAluno /= numTestes;
         printf("%.6Lf\n", mediaAluno);
 
-        // Liberar os vetores alocados dinamicamente
-        for (int j = 0; j < numTestes; j++) {
-            free(vetores[j]);
-        }
     }
+
+    //testar alunnoSort para pior caso
+    int* vetor = (int*) malloc(1000000 * sizeof(int));
+    for(int i = 0; i < 1000000; i++){
+        vetor[i] = 1000000 - i;
+    }
+    printf("Pior caso\n");
+    medirDesempenho(alunoSort, vetor, 1000000, &tempAluno[0]);
+    printf("%.6Lf\n", tempAluno[0]);
     return 0;
 }
 
@@ -187,54 +190,132 @@ void heapSort(int *vetor, int n, int tam){
 }
 
 void separarMenoresMaiores(int* vetor, int inicio, int fim) {
-    int estaSeparado = 0;
+    int estaSeparado = 0; // Tag para verificar se o vetor está separado
+
+
+    
+   
 
     while(!estaSeparado){
-        estaSeparado = 1;
-
+        estaSeparado = 1; // Inicialmente, considera-se que o vetor está separado
+        int i;
         int meio = (inicio + fim) / 2;
-        int tam = (fim - inicio + 1) * 0.1 < 3 ? 3 : (fim - inicio + 1) * 0.1;
-        int maxIndex[tam];
-        for(int i = 0; i < tam; i++) maxIndex[i] = -1;
+        int tam = ((fim - inicio)/2) * 0.1; // Tamanho do vetor de índices dos maiores elementos
+        tam = tam < 3 ? 3 : tam; 
+        int *maxIndex = (int*) malloc(tam * sizeof(int));
+        int *minIndex = (int*) malloc(tam * sizeof(int));
 
+        for(int i = 0; i < tam; i++){
+            maxIndex[i] = -1;
+            minIndex[i] = -1;
+        } 
+
+        // Definir o meio do vetor
+        
+
+        // Definir o tamanho do vetor de índices dos maiores elementos (10% do tamanho do vetor)
+        // Se o tamanho for menor que 3, tam = 3
+        
+
+        // Vetor de índices dos maiores elementos, inicializado com -1
+        
+        
+
+        // Coloca o primeiro elemento como o maior
         maxIndex[0] = inicio;
-        int i, comecoMax = 0;
 
-        for (i = inicio + 1; i < meio; i++) {
-            if (vetor[i] > vetor[maxIndex[comecoMax]]) {
-                comecoMax = (comecoMax + 1) % tam;
-                maxIndex[comecoMax] = i;
+        // Marca o índice do maior elemento atual
+        int ultimoMax = 0; 
+
+        // Percorre a primeira metade do vetor
+        // Se encontrar um elemento maior que o maior atual, atualiza o vetor de índices e o índice do maior atual
+        for (i = inicio + 1; i < meio; i++) { 
+            if (vetor[i] > vetor[maxIndex[ultimoMax]]) { 
+                ultimoMax = (ultimoMax + 1) % tam; 
+                maxIndex[ultimoMax] = i;  
             }
         }
 
-        int minIndex[tam];
-        for(int i = 0; i < tam; i++) minIndex[i] = -1;
 
+
+        // Coloca o primeiro elemento como o menor
         minIndex[0] = meio;
-        int comecoMin = 0;
 
+        // Marca o índice do menor elemento atual
+        int ultimoMin = 0;
+
+        // Percorre a segunda metade do vetor
+        // Se encontrar um elemento menor que o menor atual, atualiza o vetor de índices e o índice do menor atual
         for (i = meio + 1; i < fim; i++) {
-            if (vetor[i] < vetor[minIndex[comecoMin]]) {
-                comecoMin = (comecoMin + 1) % tam;
-                minIndex[comecoMin] = i;
+            if (vetor[i] < vetor[minIndex[ultimoMin]]) {
+                ultimoMin = (ultimoMin + 1) % tam;
+                minIndex[ultimoMin] = i;
             }
         }
 
-        for (i = 0; i < tam; i++) {
-            if(minIndex[comecoMin] == -1 || maxIndex[comecoMax] == -1) break;
-            if (vetor[maxIndex[comecoMax]] > vetor[minIndex[comecoMin]]) {
-                int aux = vetor[maxIndex[comecoMax]];
-                vetor[maxIndex[comecoMax]] = vetor[minIndex[comecoMin]];
-                vetor[minIndex[comecoMin]] = aux;
+        //         // Coloca o primeiro elemento como o maior
+        // maxIndex[0] = meio - 1;
 
-                comecoMax = (comecoMax - 1 + tam) % tam;
-                comecoMin = (comecoMin - 1 + tam) % tam;
+        // // Marca o índice do maior elemento atual
+        // int ultimoMax = 0; 
+
+        // // Percorre a primeira metade do vetor
+        // // Se encontrar um elemento maior que o maior atual, atualiza o vetor de índices e o índice do maior atual
+        // for (i = meio - 1; i >= inicio; i--) { 
+        //     if (vetor[i] > vetor[maxIndex[ultimoMax]]) { 
+        //         ultimoMax = (ultimoMax + 1) % tam; 
+        //         maxIndex[ultimoMax] = i;  
+        //     }
+        // }
+
+        // // Vetor de índices dos menores elementos, inicializado com -1;
+
+        // // Coloca o primeiro elemento como o menor
+        // minIndex[0] = fim - 1;
+
+        // // Marca o índice do menor elemento atual
+        // int ultimoMin = 0;
+
+        // // Percorre a segunda metade do vetor
+        // // Se encontrar um elemento menor que o menor atual, atualiza o vetor de índices e o índice do menor atual
+        // for(i = fim - 1; i >= meio; i--){
+        //     if(vetor[i] < vetor[minIndex[ultimoMin]]){
+        //         ultimoMin = (ultimoMin + 1) % tam;
+        //         minIndex[ultimoMin] = i;
+        //     }
+        // }
+
+
+        // Troca os elementos se o maior da primeira metade for maior que o menor da segunda metade
+        for (i = 0; i < tam; i++) {
+            if(minIndex[ultimoMin] == -1 || maxIndex[ultimoMax] == -1){
+                break;
+            }
+
+            if (vetor[maxIndex[ultimoMax]] > vetor[minIndex[ultimoMin]]) {
+                int aux = vetor[maxIndex[ultimoMax]];
+                vetor[maxIndex[ultimoMax]] = vetor[minIndex[ultimoMin]];
+                vetor[minIndex[ultimoMin]] = aux;
+
+
+
+                ultimoMax = (ultimoMax - 1 + tam) % tam;
+                ultimoMin = (ultimoMin - 1 + tam) % tam;
+
+
 
                 estaSeparado = 0;
+            }else{
+                break;
             }
+            
         }
+
+        free(maxIndex);
+        free(minIndex);
     }
 }
+
 
 void alunoSort(int* vetor, int inicio, int fim) {
 
@@ -256,8 +337,8 @@ void testarOrdenacao(int *vetor, int tam){
     int i;
     for(i = 0; i < tam - 1; i++){
         if(vetor[i] > vetor[i+1]){
-            printf("Erro na ordenação\n");
-            printf(" %d não é menor que %d\n", vetor[i], vetor[i+1]);
+            printf("Erro na ordenacao\n");
+            printf(" %d nao eh menor que %d\n", vetor[i], vetor[i+1]);
 
         }
     }
