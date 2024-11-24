@@ -138,16 +138,6 @@ int main() {
         printf("%.6Lf\n", mediaAluno);
 
     }
-
-    //testar alunnoSort para pior caso
-    int* vetor = (int*) malloc(1000000 * sizeof(int));
-    for(int i = 0; i < 1000000; i++){
-        vetor[i] = 1000000 - i;
-    }
-    printf("Pior caso\n");
-    medirDesempenho(alunoSort, vetor, 1000000, &tempAluno[0]);
-    printf("%.6Lf\n", tempAluno[0]);
-    return 0;
 }
 
 void criaHeap(int *vetor, int i, int f){
