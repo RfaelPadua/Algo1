@@ -3,54 +3,82 @@
 #include<time.h>
 #include<string.h>
 
+typedef enum { ALUNO_SORT, HEAP_SORT } SortType;
 
 
-
-// Declaracao das funcões de ordenacao
-void heapSort(int *vetor, int n, int tam); 
+//----------------------------------------------------------------//
+                  // Funcoes de ordenacao
+// HeapSort
+void heapSort(int *vetor, int tam); 
 void criaHeap(int *vetor, int i, int f);
 
+
+// AlunoSort
 void alunoSort(int *vetor, int inicio, int fim);
 void separarMenoresMaiores(int* vetor, int inicio, int fim);
 
 
 
-// Declaracao das funcões para testar a ordenacao
+//----------------------------------------------------------------//
+                  // Funcoes auxiliares
+
+
 void testarOrdenacao(int *vetor, int tam);
 
+int* gerarVetor(int tam);
 
+
+//----------------------------------------------------------------//
+                  // Funcoes de medicao de desempenho
+
+// Para windows e linux (usando rusage)
 #ifdef _WIN32
 #include <windows.h>
 #include <time.h>
-void medirDesempenho(void (*sort)(int*, int, int), int *vetor, int tam, long double *temp) {
+void medirDesempenho(SortType sortType, int *vetor, int tam, long double *temp) {
     int *copiaVetor = (int*) malloc(tam * sizeof(int));
     memcpy(copiaVetor, vetor, tam * sizeof(int));
 
-    clock_t inicio = clock();
-    sort(copiaVetor, 0, tam);
-    clock_t fim = clock();
+
+
+    if(sortType == ALUNO_SORT){
+        clock_t inicio = clock();
+        alunoSort(copiaVetor, 0, tam);
+        clock_t fim = clock();
+    }else{
+        clock_t inicio = clock();
+        heapSort(copiaVetor, tam);
+        clock_t fim = clock();
+    }
+
 
     // Verifica se o vetor foi ordenado corretamente
     testarOrdenacao(copiaVetor, tam);
 
     // Calcula o tempo total em segundos
     *temp = (long double)(fim - inicio) / CLOCKS_PER_SEC;
+
+    free(copiaVetor);
 }
 
 #else
 
 #include <sys/resource.h>
 
-void medirDesempenho(void (*sort)(int*, int, int), int *vetor, int tam, long double *temp) {
+void medirDesempenho(SortType sortType, int *vetor, int tam, long double *temp) {
     int *copiaVetor = (int*) malloc(tam * sizeof(int));
     memcpy(copiaVetor, vetor, tam * sizeof(int));
 
     struct rusage inicio, fim;
-    getrusage(RUSAGE_SELF, &inicio);
-    
-    sort(copiaVetor, 0, tam);
-    
-    getrusage(RUSAGE_SELF, &fim);
+    if(sortType == ALUNO_SORT){
+        getrusage(RUSAGE_SELF, &inicio);
+        alunoSort(copiaVetor, 0, tam);
+        getrusage(RUSAGE_SELF, &fim);
+    }else{
+        getrusage(RUSAGE_SELF, &inicio);
+        heapSort(copiaVetor, tam);
+        getrusage(RUSAGE_SELF, &fim);
+    }
 
     // Verifica se o vetor foi ordenado corretamente
     testarOrdenacao(copiaVetor, tam);
@@ -70,22 +98,13 @@ void medirDesempenho(void (*sort)(int*, int, int), int *vetor, int tam, long dou
 
     // Armazena o tempo total na variável temp (em segundos com precisao de microsegundos)
     *temp = total_usec / 1000000.0;
+
+    free(copiaVetor);
 }
 
 
 #endif
 
-int* gerarVetor(int tam) {
-    int i;
-
-    int *vetor = (int*) malloc(tam * sizeof(int));
-    for(i = 0; i < tam; i++) {
-        vetor[i] = rand() % 1000000;
-    }
-
-    return vetor;
-}
-// Funcao para medir desempenho de um algoritmo de ordenacao
 
 
 int main() {
@@ -96,7 +115,6 @@ int main() {
     //Loop sobre os tamanhos dos vetores
     for (int i = 0; i < 7; i++) { // 7 tamanhos diferentes
         int tam = tamanhos[i];
-        printf("N = %d\n", tam);
         
         // Gerar 5 vetores diferentes para o tamanho atual
         int* vetores[5];
@@ -105,10 +123,8 @@ int main() {
         }
 
         // Testar HeapSort
-        printf("heapSort\n");
         for (int j = 0; j < numTestes; j++) {
-            medirDesempenho(heapSort, vetores[j], tam, &tempHeap[j]);
-            printf("%.6Lf\n", tempHeap[j]);
+            medirDesempenho(HEAP_SORT, vetores[j], tam, &tempHeap[j]);
         }
         // Calcular o tempo medio para o HeapSort
         long double mediaHeap = 0;
@@ -116,50 +132,59 @@ int main() {
             mediaHeap += tempHeap[j];
         }
         mediaHeap /= numTestes;
-        printf("%.6Lf\n", mediaHeap);
+
 
         // Testar AlunoSort
-        printf("AlunoSort\n");
         for (int j = 0; j < numTestes; j++) {
-            medirDesempenho(alunoSort, vetores[j], tam, &tempAluno[j]);
-            printf("%.6Lf\n", tempAluno[j]);
+            medirDesempenho(ALUNO_SORT, vetores[j], tam, &tempAluno[j]);
         }
         // Calcular o tempo medio para o AlunoSort
         long double mediaAluno = 0;
         for (int j = 0; j < numTestes; j++) {
             mediaAluno += tempAluno[j];
         }
+        
         mediaAluno /= numTestes;
-        printf("%.6Lf\n", mediaAluno);
 
+
+        // printf resultados do heapSort e alunoSort lado a lado
+
+        printf("\tN = %d\n", tam);
+        printf("  HeapSort   vs   AlunoSort\n");
+        for(int j = 0; j < numTestes; j++){
+            printf("T%d:%.6Lf  |  %.6Lf\n",j + 1,  tempHeap[j], tempAluno[j]);
+        }
+        printf("TM:%.6Lf  |  %.6Lf\n", mediaHeap, mediaAluno);
     }
 }
 
 void criaHeap(int *vetor, int i, int f){
-    int aux = vetor[i];
-    int j = i * 2 + 1;
+    int aux = vetor[i]; // Guarda o valor do pai
+    int j = i * 2 + 1;  // Pega o primeiro filho
 
-
+    // Enquanto o filho for menor que o pai
     while(j <= f){
 
+        // Verifica se o filho da direita e maior que o da esquerda
         if(j < f && vetor[j] < vetor[j+1]){
-            j = j + 1;
+            j = j + 1; 
         }
 
+        // Se o filho for maior que o pai, troca
         if(aux < vetor[j]){
             vetor[i] = vetor[j];
             i = j;
             j = i * 2 + 1;
-        } else {
+        } else { 
             j = f + 1;
         }
     }
-    vetor[i] = aux;
+    vetor[i] = aux; 
 
 
 }
 
-void heapSort(int *vetor, int n, int tam){
+void heapSort(int *vetor, int tam){
     int i;
 
     for(i = (tam-1)/2; i >= 0; i--){
@@ -184,12 +209,17 @@ void separarMenoresMaiores(int* vetor, int inicio, int fim) {
         // Define o meio do vetor
         int meio = (inicio + fim) / 2;
 
-        // Vetor de índices dos maiores elementos, inicializado com -1;
-        int tam = ((fim - inicio)/2) * 0.1; // Tamanho do vetor de índices dos maiores elementos
-        tam = tam < 3 ? 3 : tam; 
+        /*Define o vetor que vai armazenar os índices dos maiores elementos*/
+
+        // Define o tamanho do vetor de índices dos maiores elementos, 25% do tamanho do vetor, no mínimo 3
+        int tam = ((fim - inicio)/2) * 0.5; 
+        tam = tam < 3 ? 3 : tam;   
+        
+        // Cria os vetores de índices
         int *maxIndex = (int*) malloc(tam * sizeof(int));
         int *minIndex = (int*) malloc(tam * sizeof(int));
 
+        // Inicializa os vetores de índices
         for(int i = 0; i < tam; i++){
             maxIndex[i] = -1;
             minIndex[i] = -1;
@@ -205,7 +235,7 @@ void separarMenoresMaiores(int* vetor, int inicio, int fim) {
         int ultimoMax = 0; 
 
         // Percorre a primeira metade do vetor
-        // Se encontrar um elemento maior que o maior atual, atualiza o vetor de índices e o índice do maior atual
+        // Se encontrar um elemento maior que o maior atual, coloca o indice do maior atual no vetor de índices e atualiza o índice do maior atual
         for (i = inicio + 1; i < meio; i++) { 
             if (vetor[i] > vetor[maxIndex[ultimoMax]]) { 
                 ultimoMax = (ultimoMax + 1) % tam; 
@@ -222,36 +252,41 @@ void separarMenoresMaiores(int* vetor, int inicio, int fim) {
         int ultimoMin = 0;
 
         // Percorre a segunda metade do vetor
-        // Se encontrar um elemento menor que o menor atual, atualiza o vetor de índices e o índice do menor atual
+        // Se encontrar um elemento menor que o menor atual, coloca o indice do menor atual no vetor de índices e atualiza o índice do menor atual
         for (i = meio + 1; i < fim; i++) {
             if (vetor[i] < vetor[minIndex[ultimoMin]]) {
-                ultimoMin = (ultimoMin + 1) % tam;
+                ultimoMin = (ultimoMin + 1) % tam; // Atualiza o índice do menor atual de forma circular, se chegar ao final, volta para o início
                 minIndex[ultimoMin] = i;
             }
         }
 
 
-        // Troca os elementos se o maior da primeira metade for maior que o menor da segunda metade
+        // Percorre ambos os vetores de índices, de forma circular invertida, trocando assim os maiores elementos pelos menores
         for (i = 0; i < tam; i++) {
+
+            // Se nao houver mais elementos para trocar, sai do loop
             if(minIndex[ultimoMin] == -1 || maxIndex[ultimoMax] == -1){
                 break;
             }
 
+            // Se o maior elemento for maior que o menor, troca
+            // Se nao, sai do loop
             if (vetor[maxIndex[ultimoMax]] > vetor[minIndex[ultimoMin]]) {
                 int aux = vetor[maxIndex[ultimoMax]];
                 vetor[maxIndex[ultimoMax]] = vetor[minIndex[ultimoMin]];
                 vetor[minIndex[ultimoMin]] = aux;
 
-                ultimoMax = (ultimoMax - 1 + tam) % tam;
-                ultimoMin = (ultimoMin - 1 + tam) % tam;
+                ultimoMax = (ultimoMax - 1 + tam) % tam; // Atualiza o índice do maior atual de forma circular, se chegar ao início, volta para o final
+                ultimoMin = (ultimoMin - 1 + tam) % tam; // Atualiza o índice do menor atual de forma circular, se chegar ao início, volta para o final
 
-                estaSeparado = 0;
+                estaSeparado = 0; // Se houve troca, o vetor nao está separado
             }else{
                 break;
             }
             
         }
 
+        // Libera a memória alocada para os vetores de índices
         free(maxIndex);
         free(minIndex);
     }
@@ -271,9 +306,6 @@ void alunoSort(int* vetor, int inicio, int fim) {
 }
 
 
-
-
-
 void testarOrdenacao(int *vetor, int tam){
     int i;
     for(i = 0; i < tam - 1; i++){
@@ -283,4 +315,16 @@ void testarOrdenacao(int *vetor, int tam){
 
         }
     }
+}
+
+
+int* gerarVetor(int tam) {
+    int i;
+
+    int *vetor = (int*) malloc(tam * sizeof(int));
+    for(i = 0; i < tam; i++) {
+        vetor[i] = rand() % 1000000;
+    }
+
+    return vetor;
 }
