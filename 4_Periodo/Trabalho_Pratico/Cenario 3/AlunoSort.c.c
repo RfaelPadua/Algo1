@@ -39,16 +39,16 @@ void medirDesempenho(SortType sortType, int *vetor, int tam, long double *temp) 
     int *copiaVetor = (int*) malloc(tam * sizeof(int));
     memcpy(copiaVetor, vetor, tam * sizeof(int));
 
-
+    clock_t inicio, fim;
 
     if(sortType == ALUNO_SORT){
-        clock_t inicio = clock();
+        inicio = clock();
         alunoSort(copiaVetor, 0, tam);
-        clock_t fim = clock();
+        fim = clock();
     }else{
-        clock_t inicio = clock();
+        inicio = clock();
         heapSort(copiaVetor, tam);
-        clock_t fim = clock();
+        fim = clock();
     }
 
 

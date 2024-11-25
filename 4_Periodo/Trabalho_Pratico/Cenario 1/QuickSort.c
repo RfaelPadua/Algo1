@@ -15,22 +15,19 @@ void preencherVetorAleatorio(int vetorInt[], int qtdNums);
 void troca(int *a, int *b);
 
 // Particiona o vetor e retorna o índice do pivô
-int particiona(int vetor[], int esquerda, int direita, size_t *compChaves);
+int particiona(int vetor[], int esquerda, int direita, unsigned long long int *compChaves);
 
 // Função principal do QuickSort
-void quicksort(int vetor[], int esquerda, int direita, size_t *compChaves);
+void quicksort(int vetor[], int esquerda, int direita, unsigned long long int *compChaves);
 
 // Escreve os resultados no arquivo com o tempo de CPU gasto
-void resultadosArquivo(char nomeArquivo[], double tempoUsuario, double tempoSistema, size_t compChaves);
+void resultadosArquivo(char nomeArquivo[], char argumentos[], double tempoUsuario, double tempoSistema, unsigned long long int compChaves);
 
 //--------------------------------------------------------------------------
 
-int main(void) {
-    int argc = 3; 
-    char *argv[] = {"programa", "1000", "texto.txt"};
-
+int main(int argc, char *argv[]) {
     struct rusage inicio, fim; // Estruturas para analisar o uso de CPU
-    size_t compChaves = 0; // Quantidade de comparações de chaves
+    unsigned long long int compChaves = 0; // Quantidade de comparações de chaves
 
     if (argc != 3) { // Informações recebidas fora do padrão
         printf("Uso: %s <quantidade> <arquivo>\n", argv[0]);
@@ -50,11 +47,11 @@ int main(void) {
         printf("Erro: numero fora do intervalo permitido\n");
         return 1;
     }
-
+ 
     int *vetorInt = (int *)malloc(sizeof(int) * (qtdNums));
 
     if(vetorInt == NULL) { // Verifica se foi alocado todo o valor
-        perror("Erro: falta de memoria para a alocacao\n");
+        perror("Erro de memoria para a alocacao\n");
         return 1;
     }
 
@@ -62,7 +59,7 @@ int main(void) {
 
     // Obtém o tempo antes da execução do quicksort
     if (getrusage(RUSAGE_SELF, &inicio) != 0) { // Erro de recebimento das informações
-        perror("Erro: falha durante a obtencao das informacoes\n");
+        perror("Erro durante a obtencao das informacoes\n");
         free(vetorInt);
         return 1;
     }
@@ -71,7 +68,7 @@ int main(void) {
 
     // Obtém o tempo após a execução do quicksort
     if (getrusage(RUSAGE_SELF, &fim) != 0) { // Erro de recebimento das informações
-        perror("Erro: falha durante a obtencao das informacoes\n");
+        perror("Erro durante a obtencao das informacoes\n");
         free(vetorInt);
         return 1;
     }
@@ -80,7 +77,7 @@ int main(void) {
     double tempoUsuario = (fim.ru_utime.tv_sec - inicio.ru_utime.tv_sec) + (fim.ru_utime.tv_usec - inicio.ru_utime.tv_usec) / 1e6;
     double tempoSistema = (fim.ru_stime.tv_sec - inicio.ru_stime.tv_sec) + (fim.ru_stime.tv_usec - inicio.ru_stime.tv_usec) / 1e6;
 
-    resultadosArquivo(nomeArquivo, tempoUsuario, tempoSistema, compChaves); // Insere os valores no arquivo
+    resultadosArquivo(nomeArquivo, argv[1], tempoUsuario, tempoSistema, compChaves); // Insere os valores no arquivo
 
     free(vetorInt);
 
@@ -105,7 +102,7 @@ void troca(int *a, int *b) {
 }
 
 // Particiona o vetor e retorna o índice do pivô
-int particiona(int vetor[], int esquerda, int direita, size_t *compChaves) {
+int particiona(int vetor[], int esquerda, int direita, unsigned long long int *compChaves) {
     int pivo = vetor[esquerda]; // Escolhe o primeiro elemento como pivô
     int i = esquerda + 1;
     int j = direita;
@@ -113,12 +110,12 @@ int particiona(int vetor[], int esquerda, int direita, size_t *compChaves) {
     while (1) {
         while (i <= j && vetor[i] <= pivo) { // Inclui igualdade no lado esquerdo
             i++;
-            *compChaves++;
+            (*compChaves)++;
         }
 
         while (j >= i && vetor[j] >= pivo) { // Inclui igualdade no lado direito
             j--;
-            *compChaves++;
+            (*compChaves)++;
         }
 
         if (i >= j) {
@@ -132,16 +129,16 @@ int particiona(int vetor[], int esquerda, int direita, size_t *compChaves) {
 }
 
 // Função principal do QuickSort
-void quicksort(int vetor[], int esquerda, int direita, size_t *compChaves) {
+void quicksort(int vetor[], int esquerda, int direita, unsigned long long int *compChaves) {
     if (esquerda < direita) { // Condição de parada
-        int pivo = particiona(vetor, esquerda, direita, &compChaves);
-        quicksort(vetor, esquerda, pivo - 1, &compChaves); // Ordena à esquerda
-        quicksort(vetor, pivo + 1, direita, &compChaves); // Ordena à direita
+        int pivo = particiona(vetor, esquerda, direita, compChaves);
+        quicksort(vetor, esquerda, pivo - 1, compChaves); // Ordena à esquerda
+        quicksort(vetor, pivo+ 1, direita, compChaves); // Ordena à direita
     }
 }
 
 // Escreve os resultados no arquivo com o tempo de CPU gasto
-void resultadosArquivo(char nomeArquivo[], double tempoUsuario, double tempoSistema, size_t compChaves) {
+void resultadosArquivo(char nomeArquivo[], char argumentos[], double tempoUsuario, double tempoSistema, unsigned long long int compChaves) {
     FILE *arquivo = fopen(nomeArquivo, "a");
 
     if (arquivo == NULL) {
@@ -149,7 +146,8 @@ void resultadosArquivo(char nomeArquivo[], double tempoUsuario, double tempoSist
         return;
     }
 
-    fprintf(arquivo, "Quantidade de comparações de chaves: %zu\n", compChaves);
+    fprintf(arquivo, "Quantidade de itens: %s\n", argumentos);
+    fprintf(arquivo, "Quantidade de comparações de chaves: %llu\n", compChaves);
     fprintf(arquivo, "Tempo de usuário: %.6f segundos\n", tempoUsuario);
     fprintf(arquivo, "Tempo de sistema: %.6f segundos\n", tempoSistema);
     fprintf(arquivo, "Tempo total: %.6f segundos\n\n", tempoUsuario + tempoSistema);
