@@ -25,7 +25,10 @@ void resultadosArquivo(char nomeArquivo[], double tempoUsuario, double tempoSist
 
 //--------------------------------------------------------------------------
 
-int main(int argc, char *argv[]) {
+int main(void) {
+    int argc = 3; 
+    char *argv[] = {"programa", "1000", "texto.txt"};
+
     struct rusage inicio, fim; // Estruturas para analisar o uso de CPU
     size_t compChaves = 0; // Quantidade de comparações de chaves
 
@@ -52,7 +55,6 @@ int main(int argc, char *argv[]) {
 
     if(vetorInt == NULL) { // Verifica se foi alocado todo o valor
         perror("Erro: falta de memoria para a alocacao\n");
-        free(vetorInt);
         return 1;
     }
 
@@ -109,20 +111,20 @@ int particiona(int vetor[], int esquerda, int direita, size_t *compChaves) {
     int j = direita;
 
     while (1) {
-        while (i <= direita && vetor[i] < pivo) {
+        while (i <= j && vetor[i] <= pivo) { // Inclui igualdade no lado esquerdo
             i++;
-            (*compChaves)++; // Incrementa a contagem de comparações
-        }
-        
-        while (j >= esquerda && vetor[j] > pivo) {
-            j--;
-            (*compChaves)++; // Incrementa a contagem de comparações
+            *compChaves++;
         }
 
-        if (i >= j) { // Índices se cruzaram
+        while (j >= i && vetor[j] >= pivo) { // Inclui igualdade no lado direito
+            j--;
+            *compChaves++;
+        }
+
+        if (i >= j) {
             break;
         }
-        troca(&vetor[i], &vetor[j]); // Troca os elementos fora do lugar
+        troca(&vetor[i], &vetor[j]);
     }
 
     troca(&vetor[esquerda], &vetor[j]); // Coloca o pivô na posição correta
@@ -132,20 +134,19 @@ int particiona(int vetor[], int esquerda, int direita, size_t *compChaves) {
 // Função principal do QuickSort
 void quicksort(int vetor[], int esquerda, int direita, size_t *compChaves) {
     if (esquerda < direita) { // Condição de parada
-        (*compChaves)++; // Incrementa a contagem de comparações
-        int pivo = particiona(vetor, esquerda, direita, compChaves);
-        quicksort(vetor, esquerda, pivo - 1, compChaves); // Ordena à esquerda
-        quicksort(vetor, pivo + 1, direita, compChaves); // Ordena à direita
+        int pivo = particiona(vetor, esquerda, direita, &compChaves);
+        quicksort(vetor, esquerda, pivo - 1, &compChaves); // Ordena à esquerda
+        quicksort(vetor, pivo + 1, direita, &compChaves); // Ordena à direita
     }
 }
 
 // Escreve os resultados no arquivo com o tempo de CPU gasto
 void resultadosArquivo(char nomeArquivo[], double tempoUsuario, double tempoSistema, size_t compChaves) {
-    FILE *arquivo = fopen(nomeArquivo, "w");
+    FILE *arquivo = fopen(nomeArquivo, "a");
 
     if (arquivo == NULL) {
         fprintf(stderr, "Erro ao abrir o arquivo %s: %s\n", nomeArquivo, strerror(errno));
-        exit(1);
+        return;
     }
 
     fprintf(arquivo, "Quantidade de comparações de chaves: %zu\n", compChaves);
