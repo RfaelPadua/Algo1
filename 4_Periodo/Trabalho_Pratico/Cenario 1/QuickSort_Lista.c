@@ -45,6 +45,9 @@ void RemoveNaPosicao(TipoLista *lista, int pos, TipoItem *itemRemovido);
 // Função para exibir a lista
 void ExibeLista(TipoLista lista);
 
+// Função para obter a célula na posição específica
+TipoCelula *obterCelula(TipoLista *lista, int posicao);
+
 //--------------------------------------------------------------------------
 
 // Preenche a lista com valores aleatórios
@@ -117,6 +120,20 @@ int main(int argc, char *argv[]) {
         }
 
         return 1;
+    }
+
+    // Verificar se a lista está ordenada
+    for(int i = 0; i < lista.tamanho - 1; i++) {
+        TipoCelula *celula = obterCelula(&lista, i);
+        TipoCelula *proximaCelula = obterCelula(&lista, i + 1);
+        if (celula == NULL || proximaCelula == NULL || celula->item.inteiro > proximaCelula->item.inteiro) {
+            printf("Erro: lista nao ordenada\n");
+            while(!VaziaLstDup(lista)) { // Esvazia a lista
+                TipoItem i;
+                RemoveNaPosicao(&lista, 0, &i);
+            }
+            return 1;
+        }
     }
 
     while(!VaziaLstDup(lista)) { // Esvazia a lista
