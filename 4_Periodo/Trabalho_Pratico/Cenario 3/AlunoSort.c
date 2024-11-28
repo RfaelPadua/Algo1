@@ -108,12 +108,12 @@ void medirDesempenho(SortType sortType, int *vetor, int tam, long double *temp) 
 
 
 int main() {
-    int tamanhos[] = {1000, 5000, 10000, 50000, 100000, 500000, 1000000}; // Diferentes tamanhos de vetores
-    int numTestes = 5; // Número de testes a serem feitos para cada tamanho
+    int tamanhos[] = {1000, 2500, 5000, 7500, 10000, 25000, 50000, 75000, 100000, 250000, 500000, 750000, 1000000}; // Diferentes tamanhos de vetores
+    int numTestes = 5; // Numero de testes para cada tamanho de vetor
     long double tempHeap[5], tempAluno[5]; // Para armazenar os tempos de cada execucao
 
     //Loop sobre os tamanhos dos vetores
-    for (int i = 0; i < 7; i++) { // 7 tamanhos diferentes
+    for (int i = 0; i < 13; i++) { // 7 tamanhos diferentes
         int tam = tamanhos[i];
         
         // Gerar 5 vetores diferentes para o tamanho atual

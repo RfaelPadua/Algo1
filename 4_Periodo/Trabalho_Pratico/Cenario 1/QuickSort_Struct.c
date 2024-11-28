@@ -19,16 +19,16 @@ typedef struct Registro {
 //--------------------------------------------------------------------------
 
 // Preenche o vetor com valores aleatórios
-void preencherRegistroAleatorio(Registro r[], int qtdNums);
+void preencherRegistroAleatorio(Registro r[], long long int qtdNums);
 
 // Faz a troca entre dois elementos
 void troca(Registro *a, Registro *b);
 
 // Particiona o vetor e retorna o índice do pivô
-int particiona(Registro r[], int esquerda, int direita, unsigned long long int *compChaves);
+long long int particiona(Registro r[], long long int esquerda, long long int direita, unsigned long long int *compChaves);
 
 // Função principal do QuickSort
-void quicksort(Registro r[], int esquerda, int direita, unsigned long long int *compChaves);
+void quicksort(Registro r[], long long int esquerda, long long int direita, unsigned long long int *compChaves);
 
 // Escreve os resultados no arquivo com o tempo de CPU gasto
 void resultadosArquivo(char nomeArquivo[], char argumentos[], double tempoUsuario, double tempoSistema, unsigned long long int compChaves); 
@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
     char *nomeArquivo = argv[2];
     char *ptrFim;
-    long int qtdNums = strtol(argv[1], &ptrFim, 10);
+    long long int qtdNums = strtol(argv[1], &ptrFim, 10);
 
     if (*ptrFim != '\0') { // Erro durante a conversao do valor recebido
         printf("Erro: '%s' nao eh um numero valido\n", argv[1]);
@@ -97,39 +97,39 @@ int main(int argc, char *argv[]) {
 //--------------------------------------------------------------------------
 
 // Preenche o vetor com valores aleatórios
-void preencherRegistroAleatorio(Registro r[], int qtdNums) {
+void preencherRegistroAleatorio(Registro r[], long long int qtdNums) {
     srand(time(NULL));
 
     // Preenche as chaves
-    for (int i = 0; i < qtdNums; i++) {
+    for (long long int i = 0; i < qtdNums; i++) {
         r[i].chave = rand() % 1000; // Gera chaves entre 0 e 999
     }
 
     // Preenche as strings
-    for (int i = 0; i < qtdNums; i++) {
+    for (long long int i = 0; i < qtdNums; i++) {
         for (int j = 0; j < 10; j++) {
-            int tamanho = (rand() % 191) + 10; // Define o tamanho aleatório entre 10 e 200
-            for (int k = 0; k < tamanho - 1; k++) { // Último índice será para '\0'
+            //int tamanho = (rand() % 191) + 10; // Define o tamanho aleatório entre 10 e 200
+            for (int k = 0; k < 5 - 1; k++) { // Último índice será para '\0'
                 if (k == 0) { // Primeira letra maiúscula
                     r[i].string[j][k] = (rand() % 26) + 'A';
                 } else { // Letras subsequentes minúsculas
                     r[i].string[j][k] = (rand() % 26) + 'a';
                 }
             }
-            r[i].string[j][tamanho - 1] = '\0'; // Adiciona o terminador '\0'
+            r[i].string[j][5 - 1] = '\0'; // Adiciona o terminador '\0'
         }
     }
 
     // Preenche os booleanos
-    for (int i = 0; i < qtdNums; i++) {
+    for (long long int i = 0; i < qtdNums; i++) {
         r[i].booleano = rand() % 2; // Booleano aleatório (0 ou 1)
     }
 
     // Preenche os valores reais
-    for (int i = 0; i < qtdNums; i++) {
+    for (long long int i = 0; i < qtdNums; i++) {
         for (int j = 0; j < 4; j++) {
-            float dividendo = (float)(rand() % 1000 + 1); // Evita zero no divisor
-            float divisor = (float)(rand() % 1000 + 1);   // Evita zero no divisor
+            float dividendo = (float)(rand() % 100 + 1); // Evita zero no divisor
+            float divisor = (float)(rand() % 100 + 1);   // Evita zero no divisor
             r[i].real[j] = dividendo / divisor;
         }
     }
@@ -165,10 +165,10 @@ void troca(Registro *a, Registro *b) {
 }
 
 // Particiona o vetor e retorna o índice do pivô
-int particiona(Registro r[], int esquerda, int direita, unsigned long long int *compChaves) {
-    int pivo = r[esquerda].chave; // Escolhe o primeiro elemento como pivô
-    int i = esquerda + 1;
-    int j = direita;
+long long int particiona(Registro r[], long long int esquerda, long long int direita, unsigned long long int *compChaves) {
+    long long int pivo = r[esquerda].chave; // Escolhe o primeiro elemento como pivô
+    long long int i = esquerda + 1;
+    long long int j = direita;
 
     while (1) {
         while (i <= j && r[i].chave <= pivo) {
@@ -192,9 +192,9 @@ int particiona(Registro r[], int esquerda, int direita, unsigned long long int *
 }
 
 // Função principal do QuickSort
-void quicksort(Registro r[], int esquerda, int direita, unsigned long long int *compChaves) {
+void quicksort(Registro r[], long long int esquerda, long long int direita, unsigned long long int *compChaves) {
     if (esquerda < direita) { // Condição de parada
-        int pivo = particiona(r, esquerda, direita, compChaves);
+        long long int pivo = particiona(r, esquerda, direita, compChaves);
         quicksort(r, esquerda, pivo - 1, compChaves); // Ordena à esquerda
         quicksort(r, pivo + 1, direita, compChaves); // Ordena à direita
     }

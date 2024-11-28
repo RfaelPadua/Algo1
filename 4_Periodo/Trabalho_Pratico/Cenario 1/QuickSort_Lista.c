@@ -188,13 +188,13 @@ void InserirNaPosicao(TipoLista *lista, TipoItem item, int pos) {
         temp->frente->tras = novaCelula;
         temp->frente = novaCelula;
     }
-
-    // Atualiza os índices dos itens à direita
+    
+    /*// Atualiza os índices dos itens à direita
     TipoCelula* temp = novaCelula->frente;
     while (temp != NULL) {
         temp->indice += 1;  // Aumenta o índice dos itens à direita
         temp = temp->frente;
-    }
+    }*/
 
     lista->tamanho++;
 }
@@ -267,7 +267,7 @@ void preencherLstDupAleatorio(TipoLista *lista, int qtdNums) {
     
     for (int i = 0; i < qtdNums; i++) {
         TipoItem item;
-        item.inteiro = rand() % 1000;  // Gera um valor aleatório de 0 a 999
+        item.inteiro = rand() % 100;  // Gera um valor aleatório de 0 a 999
         InserirNaPosicao(lista, item, i);  // Insere na posição i
     }
 }

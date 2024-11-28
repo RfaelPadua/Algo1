@@ -1,0 +1,326 @@
+%
+% Sample SBC book chapter
+%
+% This is a public-domain file.
+%
+% Charset: ISO8859-1 (latin-1) áéíóúç
+%
+\documentclass{SBCbookchapter}
+
+\usepackage[T1]{fontenc}
+\usepackage[portuguese]{babel} % Configura o idioma do documento para português
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage{caption}
+\usepackage{comment}
+
+\usepackage[utf8]{inputenc} % Suporte para caracteres especiais
+\usepackage{pgfplots}
+\usepackage{pgfplotstable}
+\pgfplotsset{compat=1.18}
+\author{Davi Henrique Garcia Araújo, Rafael de Padua Oliveira e Robson Ribeiro Filho}
+\title{Trabalho Prático I - EDII}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This paper investigates and compares different sorting algorithms and data structures, analyzing their implementations and performances across various scenarios. The study is divided into three scenarios: the first addresses traditional sorting algorithms and their underlying data structures; the second explores variations of the MergeSort algorithm; and the third compares the performance of Heapsort and AlunoSort.
+\end{abstract}
+
+\begin{resumo}
+Este trabalho investiga e compara diferentes algoritmos de ordenação e estruturas de dados, analisando suas implementações e desempenhos em diferentes cenários. O trabalho é dividido em três cenários: o primeiro trata de algoritmos de ordenação tradicionais e suas estruturas de dados subjacentes; o segundo explora variações do algoritmo MergeSort; e o terceiro compara o desempenho entre Heapsort e AlunoSort.
+\begin{otherlanguage}{brazilian}
+
+\end{otherlanguage}
+\end{resumo}
+
+\section{Informações Gerais}
+Os testes de desempenho foram realizados em um computador com as seguintes especificações: processador Intel Core i5 de 12ª geração, sistema operacional Ubuntu Linux 22.04 LTS, 16GB de memória RAM DDR4 e placa de vídeo Intel Iris Xe. As comparações entre os algoritmos são feitas com base no tempo de execução e no uso de recursos computacionais, utilizando a função getrusage do sistema operacional Linux para monitorar o consumo de recursos durante a execução.
+\section{Cenário 1: Algoritmos de ordenação e Estruturas de Dados}
+De acordo com Ziviani (2015), o QuickSort utiliza a estratégia de divisão e conquista, na qual um elemento é selecionado como pivô para particionar a lista em duas partes: uma com os elementos menores que o pivô e outra com os maiores. Em seguida, a ordenação é realizada de forma recursiva sobre essas subdivisões.
+
+O QuickSort é considerado eficiente para ordenar inteiros, apresentando uma complexidade média de $ O(n\log⁡n)$, devido à simplicidade das comparações entre os elementos. Embora o pior caso possa chegar a $ O(n^2)$ quando a escolha do pivô não é ideal, essa situação pode ser mitigada com boas estratégias de seleção do pivô. Por isso, o QuickSort é geralmente preferido em relação a algoritmos mais simples, como o Bubble Sort (ZIVIANI, 2015).
+\begin{table}[h]
+\centering
+\resizebox{0.7\textwidth}{!}{
+\begin{tabular}{|c|r|r|r|r|r|}
+\hline
+ \textbf{N} & \textbf{1.000} & \textbf{10.000} & \textbf{100.000} & \textbf{1.000.000} & \textbf{10.000.000} \\
+\hline
+Com1  & 11.908 & 193.604 & 5.595.866 & 423.694.013 & 41.535.134.898 \\
+Temp1 & 0,000166 & 0,001946 & 0,014772 & 0,427282 & 43,383890 \\
+\hline
+Com2  & 10.445 & 183.102 & 5.539.616 & 426.029.573 & 41.835.418.084 \\
+Temp2 & 0,000202 & 0,002223 & 0,021388 & 0,424769 & 46,441712 \\
+\hline
+Com3  & 11.971 & 183.102 & 5.533.207 & 426.220.969 & 41.737.502.257 \\
+Temp3 & 0,000166 & 0,001638 & 0,025105 & 0,422492 & 46,207378 \\
+\hline
+Comp4 & 11.971 & 186.321 & 5.533.207 & 424.239.044 & 41.333.874.709 \\
+Temp4 & 0,000147 & 0,002098 & 0,020796 & 0,426339 & 45,448455 \\
+\hline
+Comp5 & 11.088 & 186.321 & 5.683.387 & 426.599.552 & 41.743.601.648 \\
+Temp5 & 0,000162 & 0,002306 & 0,021126 & 0,425813 & 45,846310 \\
+\hline
+CompM & 11.908 & 186.321 & 5.539.616 & 426.029.573 & 41.737.502.257 \\
+TempM & 0,000166 & 0,002098 & 0,021126 & 0,425813 & 45,846310 \\
+\hline
+\end{tabular}
+}
+\caption{QuickSort}
+\end{table}
+
+Quando utilizado em listas duplamente encadeadas, o QuickSort torna-se menos eficiente. Ao invés de simplesmente trocar os elementos, o algoritmo precisa alterar os ponteiros de cada nó, o que aumenta a complexidade das operações. Esse aumento de complexidade torna o algoritmo menos adequado para listas encadeadas, sendo que o MergeSort, por exemplo, tende a ser mais eficiente nesse contexto (CORMEN et al., 2009).
+
+
+\begin{table}[h]
+\centering
+\resizebox{0.7\textwidth}{!}{
+\begin{tabular}{|c|r|r|r|r|r|}
+\hline
+ \textbf{N} & \textbf{1.000} & \textbf{10.000} & \textbf{100.000} & \textbf{1.000.000} & \textbf{10.000.000} \\
+\hline
+Com1  & 10.571 & 230.559 & 11.311.868 & - & - \\
+Temp1 & 0,002952 & 0,125624 & 13,354818 & - & - \\
+\hline
+Com2  & 11.546 & 211.276 & 11.139.915 & - & - \\
+Temp2 & 0,003669 & 0,126605 & 13,028776 & - & - \\
+\hline
+Com3  & 10.285 & 217.809 & 11.214.047 & - & - \\
+Temp3 & 0,004041 & 0,125875 & 12,932265 & - & - \\
+\hline
+Comp4 & 10.823 & 228.831 & 11.176.263 & - & - \\
+Temp4 & 0,002497 & 0,127018 & 13,703273 & - & - \\
+\hline
+Comp5 & 10.823 & 240.570 & 11.426.269 & - & - \\
+Temp5 & 0,002385 & 0,126882 & 13,820160 & - & - \\
+\hline
+CompM & 10.823 & 228.831 & 11.214.047 & - & - \\
+TempM & 0,002952 & 0,126605 & 13,354818 & - & - \\
+\hline
+\end{tabular}
+}
+\caption{QuickSort em Lista}
+\end{table}
+
+Em estruturas de dados compostas, como as structs, a eficiência do QuickSort depende dos campos utilizados nas comparações. Se os campos forem simples, como inteiros ou floats, o desempenho do algoritmo se mantém bom. No entanto, quando as estruturas contêm campos mais complexos, como strings ou outros tipos de dados compostos, as comparações podem se tornar um gargalo, impactando negativamente a performance do algoritmo (ZIVIANI, 2015).
+
+
+\begin{table}[h]
+\centering
+\resizebox{0.7\textwidth}{!}{
+\begin{tabular}{|c|r|r|r|r|r|}
+\hline
+ \textbf{N} & \textbf{1.000} & \textbf{10.000} & \textbf{100.000} & \textbf{1.000.000} & \textbf{10.000.000} \\
+\hline
+Com1  & 10.678 & 181.912 & 5.589.277 & 430.267.367 & - \\
+Temp1 & 0,001060 & 0,014698 & 0,199350 & 2,639955 & - \\
+\hline
+Com2  & 11.195 & 177.502 & 5.482.191 & 432.159.724 & - \\
+Temp2 & 0,001061 & 0,015484 & 0,204248 & 2,670156 & - \\
+\hline
+Com3  & 9.930 & 176.434 & 5.617.156 & 429.713.798 & - \\
+Temp3 & 0,001499 & 0,015361 & 0,198122 & 2,645608 & - \\
+\hline
+Comp4 & 11.031 & 181.153 & 5.600.214 & 426.781.568 & - \\
+Temp4 & 0,001029 & 0,014762 & 0,193450 & 2,662664 & - \\
+\hline
+Comp5 & 10.374 & 181.153 & 5.657.298 & 426.325.326 & - \\
+Temp5 & 0,001475 & 0,014630 & 0,197718 & 2,707225 & - \\
+\hline
+CompM & 10.678 & 181.153 & 5.600.214 & 429.713.798 & - \\
+TempM & 0,001061 & 0,014762 & 0,198122 & 2,662664 & - \\
+\hline
+\end{tabular}
+}
+\caption{QuickSort em Struct}
+\end{table}
+
+
+
+
+
+
+
+\section{Cenário 2: Variações do MergeSort}
+O MergeSort é um algoritmo de ordenação baseado em divisão e conquista, que divide o vetor em partes menores até obter subvetores com um único elemento e os combina de forma ordenada. Com complexidade$O(\log n)$, é eficiente para grandes conjuntos de dados, estável e preserva a ordem de elementos iguais, embora exija memória adicional para a mesclagem (Aqib; Nawaz; Butt, 2021).
+
+\subsection{MergeSort Recursivo}
+O MergeSort Recursivo ordena o vetor dividindo-o ao meio recursivamente até obter subvetores com um único elemento. Em seguida, esses subvetores são mesclados recursivamente, combinando-os em vetores maiores e ordenados até que o vetor completo esteja organizado. A recursividade guia todo o processo, gerenciando divisões e combinações de forma eficiente  (Aqib; Nawaz; Butt, 2021).
+
+\subsection{MergeSort Interativo}
+O MergeSort Iterativo ordena o vetor sem chamadas recursivas, iniciando com subvetores de tamanho 1 e dobrando o tamanho a cada etapa (2, 4, 8, etc.). Em cada interação, os subvetores adjacentes são mesclados ordenadamente até que o vetor completo esteja organizado (Ishimwe; Nguyen; Nguyen, 2021).
+
+\subsection{MergeSort Inserção(N)}
+O MergeSort por Inserção combina a recursividade do MergeSort com a ordenação por inserção. O vetor é dividido até que os subvetores atinjam um tamanho "N", quando a divisão cessa e a ordenação por inserção é aplicada. Após ordenar os subvetores, eles são mesclados como no MergeSort tradicional. (Alqattan Et Al., 2023).
+
+\subsection{MergeSort Multiway(K)}
+O MergeSort Multiway (K) divide recursivamente o vetor em K partes, em vez de duas, até que os subvetores tenham um único elemento. Em seguida, os subvetores são mesclados em etapas, formando uma sequência ordenada (Salah Et Al., 2020).
+
+\subsection{Comparação dos resultados}
+A comparação das variações do MergeSort avalia o impacto de diferentes implementações na eficiência do algoritmo, destacando vantagens em cenários específicos. Vetores com 1.000 a 10.000.000 de valores aleatórios foram usados. Os resultados estão apresentados na Tabela 1.4.
+O desempenho das variações do MergeSort demonstra características distintas com base em seu funcionamento. O MergeSort Recursivo apresenta o maior tempo médio em vetores grandes devido à sobrecarga de chamadas recursivas. Já o MergeSort Inserção(10) é mais eficiente em vetores pequenos, pois utiliza o algoritmo de inserção para ordenar  subvetores de 10 elementos antes da mesclagem. O MergeSort Inserção(100), apesar de seguir o mesmo princípio apresenta desempenho inferior ao Inserção(10), A variação Interativa se destaca em vetores pequenos, por  ter a ausência de de chamadas recursivas, mas perde eficiência conforme o tamanho do vetor cresce. Por fim, os métodos Multiway, embora mais lentos para vetores pequenos, mostram melhorias significativas para vetores grandes, como o Multiway(5) apresentando uma leve vantagem sobre o Multiway(10). 
+
+
+\begin{table}[h!]
+\centering
+\resizebox{\textwidth}{!}{
+\begin{tabular}{|r|r|r|r|r|r|r|}
+\hline
+\textbf{N} & \textbf{Recursivo (s)} & \textbf{Inserção (10) (s)} & \textbf{Inserção (100) (s)} & \textbf{Iterativo (s)} & \textbf{Multiway (10) (s)} & \textbf{Multiway (5) (s)} \\
+\hline
+1000 & 0.000258 & 0.000163 & 0.000129 & 0.000234 & 0.000196 & 0.000278 \\
+5000 & 0.001312 & 0.001005 & 0.000880 & 0.001219 & 0.001258 & 0.001320 \\
+10000 & 0.002539 & 0.001846 & 0.002034 & 0.002312 & 0.002422 & 0.002504 \\
+50000 & 0.013572 & 0.012436 & 0.013519 & 0.012507 & 0.014586 & 0.011970 \\
+100000 & 0.030725 & 0.021302 & 0.025876 & 0.022137 & 0.020402 & 0.024440 \\
+500000 & 0.104751 & 0.087559 & 0.080797 & 0.083842 & 0.105253 & 0.082108 \\
+1000000 & 0.195456 & 0.166443 & 0.153973 & 0.164828 & 0.159571 & 0.166206 \\
+5000000 & 1.023708 & 0.813007 & 0.848784 & 0.877705 & 0.968634 & 0.859729 \\
+10000000 & 2.111316 & 1.690932 & 1.743604 & 1.852401 & 1.678090 & 1.584498 \\
+\hline
+\end{tabular}
+}
+\caption{Tabela de tempos de execução dos algoritmos (em segundos).}
+\end{table}
+
+
+
+
+\section{Cenário 3: Heapsort X Aluno Sort}
+\subsection{Introdução}
+Serão analisados dois algoritmos de ordenação: o Heapsort e o AlunoSort. A análise será baseada no tempo médio de execução ao ordenar vetores de inteiros positivos aleatórios com tamanhos variando de 1.000 a 1.000.000 elementos. Serão exploradas as características do AlunoSort, apresentando-se também os resultados obtidos e as diferenças de desempenho em relação ao Heapsort.
+\subsection{HeapSort}
+O heapsort é um algoritmo de ordenação eficiente que utiliza a estrutura de dados heap como base para organizar os elementos de uma lista. O heap é uma árvore binária que possui três propriedades fundamentais: a árvore é completamente preenchida, exceto talvez no último nível; cada nó contém uma chave. Portanto, o heapsort constroi inicialmente um heap a partir do conjunto de dados e, em seguida, realiza sucessivas extrações da maior chave (no caso de um max-heap), reorganizando a estrutura a cada passo para manter a propriedade do heap. 
+\subsection{AlunoSort}
+O algoritmo AlunoSort foi desenvolvido com base no modelo de divisão e conquista, inspirado no Quicksort, mas com uma abordagem diferente. Em vez de usar um pivô, o AlunoSort realiza um rearranjo iterativo entre as duas metades do vetor. Inicialmente, o vetor é dividido ao meio, e, na primeira metade, o algoritmo encontra o maior elemento, registrando seu índice em maxIndex. Na segunda metade, o processo é similar, buscando os menores elementos e armazenando seus índices em minIndex.
+
+Após identificar os índices, o algoritmo compara os maiores de maxIndex com os menores de minIndex e os troca se necessário. Esse processo de trocas continua até que não haja mais mudanças, e então o AlunoSort é aplicado recursivamente nas duas metades. O algoritmo segue até que as metades tenham tamanho 1 ou menos, completando a ordenação do vetor.
+
+\subsection{Comparação dos resultados}
+    
+O algoritmo AlunoSort tem um custo de $k \cdot n \cdot log n$, onde $k$ é a quantidade de elementos a serem trocados. No melhor caso ($k = 1$), o custo é $n \cdot log n$, e no pior caso ($k = n$), o custo sobe para $n^2 \cdot log n$. O HeapSort, por outro lado, tem custo constante de $n \cdot log n$, devido à construção do heap e extração dos elementos.
+
+No melhor caso, ambos os algoritmos têm desempenho equivalente ($n \cdot log n$), mas no pior caso, o custo do AlunoSort é muito maior, o que faz com que o HeapSort tenho uma grande vantagem. No cenário médio, o desempenho do AlunoSort é próximo ao do HeapSort, mas ainda cresce de forma exponencial, tornando-o ineficiente para grandes volumes de dados. Em resumo, o HeapSort é mais eficiente e estável que o AlunoSort.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    title={Desempenho HeapSort x Aluno Sort},
+    xlabel={N},
+    ylabel={TempoM(s)},
+    legend pos=north west,
+    grid=major,
+    width=8cm,  % Ajuste a largura do gráfico
+    height=6cm  % Ajuste a altura do gráfico
+]
+% Primeira série de dados (HeapSort)
+\addplot table[row sep=\\] {
+    X         Y       \\
+    1000      0.000211 \\
+    5000      0.001528 \\
+    10000     0.002215 \\
+    50000     0.011227 \\
+    100000    0.024519 \\
+    500000    0.189144 \\
+    1000000   0.298384 \\
+};
+\addlegendentry{HeapSort}
+
+% Segunda série de dados (AlunoSort)
+\addplot table[row sep=\\] {
+    X         Y       \\
+    1000      0.000993 \\
+    5000      0.005199 \\
+    10000     0.011414 \\
+    50000     0.090965 \\
+    100000    0.242750 \\
+    500000    2.595352 \\
+    1000000   7.202168 \\
+};
+\addlegendentry{AlunoSort}
+\end{axis}
+\end{tikzpicture}
+\caption{Gráfico de Desempenho}
+\end{figure}
+
+
+
+\begin{comment}
+\ref{fig:Diagrama}
+\begin{figure}
+\centering
+\includegraphics[width=1\linewidth]{Diagrama.jpg}
+\caption{\label{fig:Diagrama}Ilustração do funcionamento do algoritmo AlunoSort}
+\end{figure}
+
+\section{Seção Oculta}
+\subsection{Comparação de Desempenho}
+\captionsetup{justification=centering}
+\begin{table}[h!]
+\centering
+\caption{HeapSort X AlunoSort}
+\begin{tabularx}{\textwidth}{|c|c|c|X|X|X|X|X|}
+\hline
+\textbf{N} & \textbf{1000} & \textbf{5000} & \textbf{10000} & \textbf{50000} & \textbf{100000} & \textbf{500000} & \textbf{1000000} \\
+\hline
+\multicolumn{8}{|c|}{\textbf{HeapSort}} \\
+\hline
+Temp1 & 0.000106 & 0.000575 & 0.001196 & 0.007206 & 0.015010 & 0.116084 & 0.218895 \\
+Temp2 & 0.000106 & 0.000572 & 0.001196 & 0.007123 & 0.015168 & 0.103810 & 0.218567 \\
+Temp3 & 0.000103 & 0.000564 & 0.001231 & 0.007168 & 0.015009 & 0.109295 & 0.220482 \\
+Temp4 & 0.000103 & 0.000562 & 0.001267 & 0.009088 & 0.015044 & 0.103754 & 0.241412 \\
+Temp5 & 0.000102 & 0.000583 & 0.001399 & 0.007281 & 0.015138 & 0.097376 & 0.236780 \\
+TempM & 0.000104 & 0.000571 & 0.001258 & 0.007573 & 0.015074 & 0.106064 & 0.227227 \\
+\hline
+\multicolumn{8}{|c|}{\textbf{AlunoSort}} \\
+\hline
+Temp1 & 0.000472 & 0.004086 & 0.010244 & 0.110135 & 0.323203 & 3.601546 & 10.10467 \\
+Temp2 & 0.000482 & 0.003871 & 0.010845 & 0.152249 & 0.313567 & 3.612871 & 9.86464 \\
+Temp3 & 0.000502 & 0.004179 & 0.010493 & 0.124693 & 0.327281 & 3.538757 & 10.28444 \\
+Temp4 & 0.000526 & 0.003901 & 0.010217 & 0.137772 & 0.324525 & 3.487870 & 9.98769 \\
+Temp5 & 0.000595 & 0.004170 & 0.009954 & 0.099541 & 0.327844 & 3.498561 & 10.03807 \\
+TempM & 0.000515 & 0.004041 & 0.010351 & 0.124878 & 0.323284 & 3.547921 & 10.05590 \\
+\hline
+\end{tabularx}
+\end{table}
+
+\
+
+
+\end{comment}
+
+
+
+\begin{thebibliography}{99}
+
+\bibitem{alqattan2023}
+ALQATTAN, Masuma M. et al. Comparison of Insertion, Merge, and Hybrid Sorting Algorithms Using C+. 2023.
+
+\bibitem{aqib2021}
+AQIB, Syed Muqeet; NAWAZ, Haque; BUTT, Shah Muhammad. Analysis of merge sort and bubble sort in python, php, javascript, and c language. *International Journal*, v. 10, n. 2, 2021.
+
+\bibitem{cormen2014}
+CORMEN, Thomas H. Desmistificando algoritmos. 1. ed. Rio de Janeiro: Elsevier, 2014.
+
+\bibitem{cormen2009}
+CORMEN, Thomas H.; LEISERSON, Charles E.; RIVEST, Ronald L.; STEIN, Clifford. *Introdução aos Algoritmos*. 3. ed. Rio de Janeiro: Elsevier, 2009.
+
+\bibitem{ishimwe2021}
+ISHIMWE, D.; NGUYEN, K.; NGUYEN, T. Dynaplex: analyzing program complexity using dynamically inferred recurrence relations. *Proceedings of the ACM on Programming Languages*, 5(OOPSLA), 1-23, 2021.
+
+\bibitem{salah2020}
+SALAH, Ahmad et al. A time-space efficient algorithm for parallel k-way in-place merging based on sequence partitioning and perfect shuffle. *ACM Transactions on Parallel Computing (TOPC)*, v. 7, n. 2, p. 1-23, 2020.
+
+\bibitem{sarkar2021}
+SARKAR, Bishal et al. An Advanced Research on Enhancing Sorting and Searching Algorithms: A Comprehensive Study. Kolkata: Department of Electronics and Communication Engineering, Guru Nanak Institute of Technology.
+
+\bibitem{ziviani2015}
+ZIVIANI, Nívio. Projeto de Algoritmos com Implementação em Pascal e C. 2. ed. Cengage Learning, 2015.
+
+\end{thebibliography}
+
+
+\end{document}
