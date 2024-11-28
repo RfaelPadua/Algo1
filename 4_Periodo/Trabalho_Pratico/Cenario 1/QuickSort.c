@@ -73,6 +73,14 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+
+    for(int i = 0; i < qtdNums; i++) {
+        if(vetorInt[i] < vetorInt[i - 1]) { // Verifica se o vetor está ordenado
+            printf("Erro: vetor nao ordenado\n");
+            free(vetorInt);
+            return 1;
+        }
+    }
     // Calcula o tempo de CPU gasto (segundos)
     double tempoUsuario = (fim.ru_utime.tv_sec - inicio.ru_utime.tv_sec) + (fim.ru_utime.tv_usec - inicio.ru_utime.tv_usec) / 1e6;
     double tempoSistema = (fim.ru_stime.tv_sec - inicio.ru_stime.tv_sec) + (fim.ru_stime.tv_usec - inicio.ru_stime.tv_usec) / 1e6;

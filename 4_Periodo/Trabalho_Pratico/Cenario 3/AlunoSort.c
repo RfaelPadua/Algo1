@@ -238,7 +238,7 @@ void separarMenoresMaiores(int* vetor, int inicio, int fim) {
         // Se encontrar um elemento maior que o maior atual, coloca o indice do maior atual no vetor de índices e atualiza o índice do maior atual
         for (i = inicio + 1; i < meio; i++) { 
             if (vetor[i] > vetor[maxIndex[ultimoMax]]) { 
-                ultimoMax = (ultimoMax + 1) % tam; 
+                ultimoMax = (ultimoMax + 1) % tam;
                 maxIndex[ultimoMax] = i;  
             }
         }

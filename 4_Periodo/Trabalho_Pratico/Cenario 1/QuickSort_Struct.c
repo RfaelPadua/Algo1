@@ -83,6 +83,15 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    //verificar ordenação
+    for (int i = 0; i < qtdNums - 1; i++) {
+        if (registro[i].chave > registro[i + 1].chave) {
+            printf("Erro: Vetor nao ordenado\n");
+            free(registro);
+            return 1;
+        }
+    }
+
     // Calcula o tempo de CPU gasto (segundos)
     double tempoUsuario = (fim.ru_utime.tv_sec - inicio.ru_utime.tv_sec) + (fim.ru_utime.tv_usec - inicio.ru_utime.tv_usec) / 1e6;
     double tempoSistema = (fim.ru_stime.tv_sec - inicio.ru_stime.tv_sec) + (fim.ru_stime.tv_usec - inicio.ru_stime.tv_usec) / 1e6;
