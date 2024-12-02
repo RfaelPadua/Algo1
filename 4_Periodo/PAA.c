@@ -9,8 +9,8 @@
 #define MAXUNSIGNINT 4294967295
 
 //função que volta todos os numeros primos até um numero n
-int numerosPrimosForcaBruta(int n, int *primos){
-    int i, j, cont = 1;
+int numerosPrimosForcaBruta(unsigned long long int n, int *primos){
+    int i, j, cont = 0;
     for(i = 2; i <= n; i++){
         for(j = 2; j < i; j++){
             if(i % j == 0){
@@ -26,8 +26,8 @@ int numerosPrimosForcaBruta(int n, int *primos){
 }
 
 
-int numerosPrimosCrivo(int n, int *primos){
-    int i, j, cont = 1;
+int numerosPrimosCrivo(unsigned long long int n, int *primos){
+    int i, j, cont = 0;
     int *numeros = (int*) malloc((n+1) * sizeof(int));
     for(i = 0; i <= n; i++){ 
         numeros[i] = 1; 
@@ -77,21 +77,25 @@ void medirDesempenho(int n, int *primos){
 
 #include <sys/resource.h>
 
-void medirDesempenho(int n, int *primos){
+void medirDesempenho(unsigned long long int n, int *primos){
     struct rusage usage;
     struct timeval start, end;
     double tempo;
-    getrusage(RUSAGE_SELF, &usage);
-    start = usage.ru_utime;
-    int numerosPrimos = numerosPrimosForcaBruta(n, primos);
-    getrusage(RUSAGE_SELF, &usage);
-    end = usage.ru_utime;
-    tempo = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
-    printf("Forca Bruta\n");
-    printf("Tempo: %lf\n", tempo);
-    printf("Quantidade de primos: %d\n", numerosPrimos);
-    printf("\n");
+    int numerosPrimos;
+    if(n){
+        getrusage(RUSAGE_SELF, &usage);
+        start = usage.ru_utime;
+        numerosPrimos = numerosPrimosForcaBruta(n, primos);
+        getrusage(RUSAGE_SELF, &usage);
+        end = usage.ru_utime;
+        tempo = (end.tv_sec - start.tv_sec) + (end.tv_usec - start.tv_usec) / 1000000.0;
+        printf("Forca Bruta\n");
+        printf("Tempo: %lf\n", tempo);
+        printf("Quantidade de primos: %d\n", numerosPrimos);
+        printf("\n");
+    }
 
+    
     getrusage(RUSAGE_SELF, &usage);
     start = usage.ru_utime;
     numerosPrimos = numerosPrimosCrivo(n, primos);
@@ -109,15 +113,16 @@ void medirDesempenho(int n, int *primos){
 #endif
 
 int main(){
-    int n = 10;
+    unsigned long long int n = 10;
     
 
-    for(;n <= 1000000000; n *= 10){
+    while(n != n+1){
         int *primos = (int*) malloc((n+1) * sizeof(int));
         printf("N: %d\n", n);
         medirDesempenho(n, primos);
         printf("\n");
         free(primos);
+        n *= 2;
     }
 
 
